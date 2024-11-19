@@ -13,38 +13,75 @@
                 <router-link to="/" class="nav-link">홈</router-link>
                 <router-link to="/exchange" class="nav-link">환율 계산</router-link>
                 <router-link to="/nearby-banks" class="nav-link">주변 은행</router-link>
+                <router-link to="/products" class="nav-link">상품 정보</router-link>
                 <router-link to="/articles" class="nav-link">커뮤니티</router-link>
                 <router-link to="/product-recommendation" class="nav-link">금융 상품 추천</router-link>
-                <button 
-                    @click="openLoginModal" 
-                    class="login-button"
-                    @mouseenter="isHovered = true"
-                    @mouseleave="isHovered = false"
-                >
-                    <div class="button-background"></div>
-                    <span class="button-text">로그인</span>
-                </button>
+                <template v-if="!authStore.isAuthenticated">
+                    <button 
+                        @click="openLoginModal" 
+                        class="login-button"
+                        @mouseenter="isHovered = true"
+                        @mouseleave="isHovered = false"
+                    >
+                        <div class="button-background"></div>
+                        <span class="button-text">로그인/회원가입 </span>
+                    </button>
+                </template>
+                <template v-else>
+                    <div class="user-menu">
+                        <span class="username">{{ authStore.username }}</span>
+                        <button @click="handleLogout" class="logout-button">로그아웃</button>
+                    </div>
+                </template>
             </div>
         </div>
-        <LoginModal :isVisible="isLoginModalVisible" :closeModal="closeLoginModal" />
+        <LoginModal 
+            :isVisible="isLoginModalVisible" 
+            :closeModal="closeLoginModal"
+            :switchToSignup="() => {
+                isLoginModalVisible = false;
+                isSignupModalVisible = true;
+            }"
+        />
+        <SignupModal 
+            :isVisible="isSignupModalVisible" 
+            :closeModal="closeSignupModal"
+            :switchToLogin="() => {
+                isSignupModalVisible = false;
+                isLoginModalVisible = true;
+            }"
+        />
     </nav>
     <div class="nav-spacer"></div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import LoginModal from './LoginModal.vue'
+import SignupModal from './SignupModal.vue'
 
+const authStore = useAuthStore()
 const isLoginModalVisible = ref(false)
+const isSignupModalVisible = ref(false)
 const isHovered = ref(false)
 const isMenuOpen = ref(false)
 
+const handleLogout = () => {
+    authStore.logout()
+}
+
 const openLoginModal = () => {
     isLoginModalVisible.value = true
+    isSignupModalVisible.value = false
 }
 
 const closeLoginModal = () => {
     isLoginModalVisible.value = false
+}
+
+const closeSignupModal = () => {
+    isSignupModalVisible.value = false
 }
 
 const toggleMenu = () => {
@@ -220,5 +257,31 @@ const toggleMenu = () => {
         width: 100%;
         margin-top: 10px;
     }
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    color: #2D60FF;
+    font-weight: 600;
+}
+
+.logout-button {
+    padding: 0.5rem 1rem;
+    background-color: #f1f3f5;
+    border: none;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #e9ecef;
 }
 </style>

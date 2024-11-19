@@ -12,7 +12,7 @@
       <h1>{{ article.title }}</h1>
       <div class="article-meta">
         <span>작성자: {{ article.author }}</span>
-        <span>작성일: {{ formatDate(article.author_username) }}</span>
+        <span>작성일: {{ formatDate(article.created_at) }}</span>
       </div>
       
       <div class="article-body">
@@ -62,6 +62,7 @@
 import { ref, onMounted } from 'vue'
 import articlesAPI from '../apis/articlesAPI'
 import { format } from 'date-fns'
+import { useAuthStore } from '../stores/auth'   
 
 export default {
   name: 'ArticleDetailView',
@@ -142,6 +143,11 @@ export default {
       return format(new Date(date), 'yyyy-MM-dd HH:mm')
     }
 
+    const isCommentAuthor = (comment) => {
+      const authStore = useAuthStore();
+      return comment.user === authStore.username;
+    };
+
     onMounted(fetchArticle)
 
     return {
@@ -154,7 +160,8 @@ export default {
       handleDislike,
       submitComment,
       deleteComment,
-      formatDate
+      formatDate,
+      isCommentAuthor
     }
   }
 }
