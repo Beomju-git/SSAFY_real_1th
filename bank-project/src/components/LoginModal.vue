@@ -79,7 +79,7 @@ const handleLogin = async () => {
   try {
     isLoading.value = true
     error.value = ''
-    const response = await axios.post('http://localhost:8000/api/login/', {
+    const response = await axios.post('http://localhost:8000/a/login/', {
       username: loginForm.value.username,
       password: loginForm.value.password
     })
