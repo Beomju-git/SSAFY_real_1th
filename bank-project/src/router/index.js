@@ -66,6 +66,11 @@ const router = createRouter({
       // 참고 Vue 파일의 명명 규칙 : 파스칼 케이스
       component: () => import('../views/ProductRecommendationsView.vue'),
     },
+    {
+      path: '/products',
+      name: 'products',
+      component: () => import('../views/ProductsView.vue')
+    }
   ],
 })
 

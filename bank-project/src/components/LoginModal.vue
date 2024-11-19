@@ -3,7 +3,7 @@
     <div v-if="isVisible" class="modal" @click.self="closeModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="title">로그인</h2>
+          <h2 class="title">로그인/회원가입</h2>
           <button class="close-button" @click="closeModal" aria-label="닫기">×</button>
         </div>
         <form @submit.prevent="handleLogin" class="form">
@@ -53,6 +53,12 @@
             <span>{{ isLoading ? '로그인 중' : '로그인' }}</span>
           </button>
         </form>
+        <div class="signup-section">
+          <p>아직 계정이 없으신가요?</p>
+          <a href="#" class="signup-link" @click.prevent="switchToSignup">
+            회원가입
+          </a>
+        </div>
       </div>
     </div>
   </Transition>
@@ -63,7 +69,8 @@ import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 
-const props = defineProps(['isVisible', 'closeModal'])
+const props = defineProps(['isVisible', 'closeModal', 'switchToSignup'])
+const emit = defineEmits(['close'])
 const authStore = useAuthStore()
 const loginForm = ref({ username: '', password: '' })
 const error = ref('')
@@ -79,15 +86,26 @@ const handleLogin = async () => {
   try {
     isLoading.value = true
     error.value = ''
-    const response = await axios.post('http://localhost:8000/a/login/', {
+
+    const response = await axios.post('http://localhost:8000/accounts/login/', {
       username: loginForm.value.username,
       password: loginForm.value.password
     })
-    authStore.token = response.data.token
-    closeModal()
+    
+    console.log('로그인 응답:', response.data)
+
+    if (response.data.key) {
+      authStore.token = response.data.key
+      loginForm.value = { username: '', password: '' }
+      props.closeModal()
+    } else {
+      error.value = '로그인 실패: 토큰이 없습니다'
+      console.error('토큰 없음:', response.data)
+    }
   } catch (err) {
-    error.value = '아이디 또는 비밀번호가 일치하지 않습니다'
-    console.error('로그인 실패:', err)
+    console.error('로그인 에러:', err.response?.data || err)
+    error.value = err.response?.data?.non_field_errors?.[0] || 
+                 '아이디 또는 비밀번호가 일치하지 않습니다'
   } finally {
     isLoading.value = false
   }
@@ -148,11 +166,15 @@ const handleLogin = async () => {
 }
 
 .form-group {
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .form-input {
-  width: 80%;
+  width: 100%;
   height: 44px;
   padding: 0 0.875rem;
   border: 1px solid #e5e8eb;
@@ -178,12 +200,16 @@ const handleLogin = async () => {
 }
 
 .password-input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   position: relative;
 }
 
 .password-toggle {
   position: absolute;
-  right: 2.5rem;
+  right: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -251,5 +277,33 @@ const handleLogin = async () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.signup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.signup-section p {
+  color: #8b95a1;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.signup-link {
+  color: #2D60FF;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-link:hover {
+  color: #1E4AD6;
+  text-decoration: underline;
 }
 </style>    
