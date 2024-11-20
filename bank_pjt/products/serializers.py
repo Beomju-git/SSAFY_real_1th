@@ -6,6 +6,7 @@ class TermDepositSerializer(serializers.ModelSerializer):
     class Meta:
         model = TermDeposit
         fields='__all__'
+        read_only_fields =('zzimed_product',)
         
 # 정기 예금 option update
 class TermDepositOptionSerializer(serializers.ModelSerializer):

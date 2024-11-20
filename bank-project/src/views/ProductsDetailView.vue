@@ -6,20 +6,53 @@
         <p><strong>금융 회사명:</strong> {{ detail.kor_co_nm }}</p> 
         <p><strong>금융 상품명:</strong> {{ detail.fin_prdt_nm }}</p>
         <p><strong>가입 방법:</strong> {{ detail.join_way }}</p>
+        
         <p><strong>상세 설명:</strong><span class="detailed-description" v-html="formatDetail(detail.etc_note)"></span></p>
+        <div v-if="!isZzimed">
+        <button @click.prevent="recommend()"> 찜 취소</button>
+        </div>
+        <div v-else>
+        <button @click.prevent="recommend()"> 찜</button>
+        </div>
       </div>
     </div>
   </template>
   
   <script setup>
   import { useRoute } from 'vue-router';
-  import { ref } from 'vue';
+  import { ref,computed } from 'vue';
   import { onBeforeMount } from 'vue';
   import axios from 'axios';
+  import { useAuthStore } from '@/stores/auth';
+
+  const authStore = useAuthStore()
   
   const route = useRoute();
   const fin_prdt_cd = ref(route.params.fin_prdt_cd);
   const detail = ref();
+
+  let isZzimed = ref()
+  const recommend = () => {
+    axios({
+        method: 'post',
+        url: `http://127.0.0.1:8000/products/term_deposit/detail/${fin_prdt_cd.value}/recommend/`,
+        headers:{
+            Authorization: `Token ${authStore.token}`
+        }   
+    }).then((req) => {
+        console.log(req.data)
+        console.log(authStore.user?.id)
+        if (req.data.zzimed_product.includes(authStore.user?.id) ) {
+            console.log(111)
+            isZzimed.value = true
+        }else{
+            console.log(222)
+            isZzimed.value = false
+             }
+          
+    })
+  }
+
   
   onBeforeMount(() => {
     axios({
@@ -29,6 +62,15 @@
     .then((response) => {
       detail.value = response.data;
       console.log(detail.value);
+      
+      if (detail.value.zzimed_product.includes(authStore.user?.id) ) {
+            console.log(111)
+            isZzimed.value = true
+        }else{
+            console.log(222)
+            isZzimed.value = false
+             }
+          
     });
   });
   
