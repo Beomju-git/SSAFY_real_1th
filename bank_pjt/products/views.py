@@ -371,6 +371,24 @@ def creditloan(request):
     print(1)
     return Response(serializers.data)
 
+
+########################################
+## 상품 찜 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
+def term_deposit_recommend(request,fin_prdt_cd ):
+    product = TermDeposit.objects.get(fin_prdt_cd = fin_prdt_cd)
+    if request.user in product.zzimed_product.all():
+        product.zzimed_product.remove(request.user)
+        serializer = TermDepositSerializer(product)
+        return Response(serializer.data)
+    else:
+        product.zzimed_product.add(request.user)
+        serializer = TermDepositSerializer(product)
+        return Response(serializer.data)
+        pass
+    
+
 # ###선제담보 대출####################################################
 # @api_view(["GET"])
 # def renthousloan_update(request):

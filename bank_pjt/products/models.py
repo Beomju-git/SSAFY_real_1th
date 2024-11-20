@@ -1,7 +1,9 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 class TermDeposit(models.Model):
+    zzimed_product = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='zzim_product')
     product_type =models.TextField() # 예금/적금 타입 구별
     fin_prdt_cd = models.TextField(unique=True) # 금융 상품 코드
     kor_co_nm = models.TextField() # 금융 회사명
