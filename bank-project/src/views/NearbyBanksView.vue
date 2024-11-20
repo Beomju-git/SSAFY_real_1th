@@ -1,162 +1,258 @@
 <template>
-  <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true" ref="kakaoMap">
-    <div v-for="location in locations" :key="location.id">
-      <KakaoMapMarker :lat="location.y" :lng="location.x"
-      @mouseOverKakaoMapMarker="hideInfoWindow(location)"
-      ></KakaoMapMarker>
+  <div class="map_wrap">
+    <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden;"></div>
+    <div id="menu_wrap" class="bg_white">
+      <div class="option">
+        <form @submit.prevent="searchPlaces">
+          키워드:
+          <input type="text" v-model="keyword" id="keyword" size="15" />
+          <button type="submit">검색하기</button>
+        </form>
+      </div>
+      <hr />
+      <ul id="placesList">
+        <li v-for="(place, index) in places" :key="index" class="item" @mouseover="displayInfowindow(index)" @mouseout="closeInfowindow" @click="moveToLocation(index)">
+          <span :class="'markerbg marker_' + (index + 1)" :style="{ backgroundPosition: '0px -' + (index * 46) + 'px' }"></span>
+          <div class="info">
+            <h5>{{ place.place_name }}</h5>
+            <span v-if="place.road_address_name">{{ place.road_address_name }}</span>
+            <span class="jibun gray">{{ place.address_name }}</span>
+            <span class="tel">{{ place.phone }}</span>
+          </div>
+        </li>
+      </ul>
+      <div id="pagination">
+        <a v-for="page in paginationPages" :key="page" href="#" @click.prevent="gotoPage(page)" :class="{ on: page === currentPage }">
+          {{ page }}
+        </a>
+      </div>
     </div>
-  </KakaoMap>
-
-  <!-- 검색창 영역 -->
-  <div class="search-container">
-    <input
-      v-model="keyword"
-      @keyup.enter="searchPlaces"
-      placeholder="장소를 검색하세요"
-      class="search-input"
-    />
-    <button @click="searchPlaces" class="search-button">검색</button>
-  </div> 
+  </div>
 </template>
-<script setup>
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
-import { ref } from 'vue';
 
-const keyword = ref('');
-const coordinate = ref({
-  lat: 36.3547,
-  lng: 127.3347
-});
-const locations = ref([]);
+<script>
+export default {
+  data() {
+    return {
+      map: null,
+      ps: null,
+      infowindow: null,
+      keyword: "현충원역",
+      places: [],
+      markers: [],
+      pagination: null,
+      currentPage: 1,
+    };
+  },
+  computed: {
+    paginationPages() {
+      return this.pagination ? Array.from({ length: this.pagination.last }, (_, i) => i + 1) : [];
+    },
+  },
+  mounted() {
+    const kakao = window.kakao;
+    const mapContainer = document.getElementById("map");
+    const mapOption = {
+      center: new kakao.maps.LatLng(37.566826, 126.9786567),
+      level: 3,
+    };
 
-const searchPlaces = () => {
-  if (!keyword.value.trim()) {
-    alert('검색어를 입력해주세요');
-    return;
-  }
+    this.map = new kakao.maps.Map(mapContainer, mapOption);
+    this.ps = new kakao.maps.services.Places();
+    this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-  const ps = new kakao.maps.services.Places();
-  
-  // Perform a keyword search
-  ps.keywordSearch(keyword.value, (data, status) => {
-    if (status === kakao.maps.services.Status.OK) {
-      // Update locations with search results
-      locations.value = data;
+    this.searchPlaces();
+  },
+  methods: {
+    searchPlaces() {
+      const kakao = window.kakao;
 
-      // Set map center to the first result's coordinates
-      coordinate.value.lat = parseFloat(data[0].y);
-      coordinate.value.lng = parseFloat(data[0].x);
+      if (!this.keyword.trim()) {
+        alert("키워드를 입력해주세요!");
+        return;
+      }
 
-      // Optionally, adjust map bounds to fit all markers
+      this.ps.keywordSearch(this.keyword +'은행', (data, status, pagination) => {
+        if (status === kakao.maps.services.Status.OK) {
+          this.places = data;
+          this.pagination = pagination;
+          this.displayMarkers();
+        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+          alert("검색 결과가 존재하지 않습니다.");
+        } else if (status === kakao.maps.services.Status.ERROR) {
+          alert("검색 결과 중 오류가 발생했습니다.");
+        }
+      });
+    },
+    moveToLocation(index) {
+    const kakao = window.kakao;
+
+    // 클릭된 장소의 좌표 가져오기
+    const position = new kakao.maps.LatLng(this.places[index].y, this.places[index].x);
+
+    // 지도 중심을 해당 좌표로 이동
+    this.map.setCenter(position);
+    this.map.setLevel(3);
+    // 선택된 마커에 인포윈도우 표시
+    const content = `<div style="padding:5px;z-index:1;">${this.places[index].place_name}</div>`;
+    this.infowindow.setContent(content);
+    this.infowindow.open(this.map, this.markers[index]);
+  },
+    displayMarkers() {
+      const kakao = window.kakao;
+      this.clearMarkers();
+
       const bounds = new kakao.maps.LatLngBounds();
-      data.forEach(place => {
-        bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+      this.places.forEach((place, index) => {
+        const position = new kakao.maps.LatLng(place.y, place.x);
+        const marker = this.createMarker(position, index);
+        this.markers.push(marker);
+        bounds.extend(position);
+      });
+
+      this.map.setBounds(bounds);
+    },
+    createMarker(position, index) {
+      const kakao = window.kakao;
+      const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png";
+      const imageSize = new kakao.maps.Size(36, 37);
+      const imgOptions = {
+        spriteSize: new kakao.maps.Size(36, 691),
+        spriteOrigin: new kakao.maps.Point(0, index * 46 + 10),
+        offset: new kakao.maps.Point(13, 37),
+      };
+      const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
+
+      const marker = new kakao.maps.Marker({
+        position,
+        image: markerImage,
       });
       
-      // Access the map instance and adjust its bounds
-      const mapInstance = $refs.kakaoMap.map;
-      mapInstance.setBounds(bounds);
-    } else {
-      alert('검색 결과가 없습니다.');
-    }
-  });
-};
-const showInfoWindow = (location) => {
-  console.log(1)
-};
+      // 클릭 했을 때 마커에 창 띄우기
+      kakao.maps.event.addListener(marker, "click", () => {
+        this.displayInfowindow(index);
+        this.moveToLocation(index)
+          });
 
-const infoWindow = new kakao.maps.InfoWindow({
-  content :'안녕'
-})
-// 마커에서 마우스를 뗐을 때 인포윈도우 닫기 함수 (마우스아웃 시)
-const hideInfoWindow = (location) => {
-  console.log(2)
-  infoWindow
+          
+      kakao.maps.event.addListener(marker, "mouseover", () => {
+          this.displayInfowindow(index);
+        });
+
+        
+      // 마우스를 떼었을 때 인포윈도우 닫기
+      kakao.maps.event.addListener(marker, "mouseout", () => {
+        this.closeInfowindow();
+      });
+      
+      marker.setMap(this.map);
+      return marker;
+    },
+    displayInfowindow(index) {
+      const kakao = window.kakao;
+      const content = `<div style="padding:5px;z-index:1;">${index+1}. ${this.places[index].place_name}</div>`;
+      this.infowindow.setContent(content);
+      this.infowindow.open(this.map, this.markers[index]);
+    },
+    closeInfowindow() {
+      this.infowindow.close();
+    },
+    clearMarkers() {
+      this.markers.forEach((marker) => marker.setMap(null));
+      this.markers = [];
+    },
+    gotoPage(page) {
+      this.pagination.gotoPage(page);
+      this.currentPage = page;
+    },
+  },
 };
 
 </script>
 
 <style scoped>
-.map-wrapper {
+.map_wrap {
   position: relative;
   width: 100%;
-  height: 100vh;
-  padding: 20px;
+  height: 500px;
 }
-
-.search-container {
-  position: relative;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  gap: 10px;
-  width: 400px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.search-input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.search-button {
-  padding: 8px 16px;
-  background: #2c3e50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.map-container {
-  width: 100%;
-  height: calc(100vh - 40px);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.search-results {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  width: 400px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.result-item {
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-}
-
-.result-item:hover {
-  background: #f5f5f5;
-}
-
-.result-item h3 {
+.map_wrap * {
   margin: 0;
-  font-size: 15px;
-  color: #333;
+  padding: 0;
+  font-family: "Malgun Gothic", dotum, "돋움", sans-serif;
+  font-size: 12px;
 }
-
-.result-item p {
-  margin: 5px 0 0;
-  font-size: 13px;
-  color: #666;
+.map_wrap a,
+.map_wrap a:hover,
+.map_wrap a:active {
+  color: #000;
+  text-decoration: none;
+}
+#menu_wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  margin: 10px 0 30px 10px;
+  padding: 5px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 1;
+  font-size: 12px;
+  border-radius: 10px;
+}
+#menu_wrap hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 2px solid #5f5f5f;
+  margin: 3px 0;
+}
+#placesList li {
+  list-style: none;
+}
+.item {
+  position: relative;
+  border-bottom: 1px solid #888;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 65px;
+}
+.item span {
+  display: block;
+  margin-top: 4px;
+}
+.item h5,
+.item .info {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.item .info {
+  padding: 10px 0 10px 55px;
+}
+.item .info .gray {
+  color: #8a8a8a;
+}
+.item .info .tel {
+  color: #009900;
+}
+.item .markerbg {
+  float: left;
+  position: absolute;
+  width: 36px;
+  height: 37px;
+  margin: 10px 0 0 10px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png") no-repeat;
+}
+#pagination a {
+  display: inline-block;
+  margin-right: 10px;
+}
+#pagination .on {
+  font-weight: bold;
+  cursor: default;
+  color: #777;
 }
 </style>

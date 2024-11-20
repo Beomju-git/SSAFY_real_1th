@@ -47,9 +47,11 @@
             :key="`${item.fin_prdt_nm}-${item.dcls_strt_day}`"
             class="hover:bg-gray-50"
           >
+          <RouterLink :to="{name:'products_detail', params:{fin_prdt_cd: item.fin_prdt_cd}}">
             <td class="px-4 py-3 border-b">{{ formatDate(item.dcls_strt_day) }}</td>
-            <td class="px-4 py-3 border-b">{{ item.kor_co_nm }}</td>
+            <td class="px-4 py-3 border-b" >{{ item.kor_co_nm }}</td>
             <td class="px-4 py-3 border-b">{{ item.fin_prdt_nm }}</td>
+          </RouterLink>
             <td 
               v-for="period in ['6', '12', '24', '36']" 
               :key="period"
@@ -67,6 +69,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useProductStore } from '@/stores/product'
+import { RouterLink } from 'vue-router';
 
 const productStore = useProductStore()
 const searchTerm = ref('')

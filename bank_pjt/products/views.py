@@ -4,7 +4,9 @@ from rest_framework.decorators import api_view
 import requests
 from .models import TermDeposit, TermDepositOptions, Savings, SavingsOptions, LoanOptions, LoanProducts, CreditLoanProducts, CreditLoanOptions
 from .serializers import TermDepositSerializer, TermDepositOptionSerializer, TermDepositAllSerializer, SavingsSerializer, SavingsOptionSerializer, SavingsAllSerializer, LoanSerializer, LoanOptionSerializer, LoanAllSerializer, CreditLoanAllSerializer, CreditLoanOptionSerializer, CreditLoanSerializer
-
+# 회원가입을 위해
+from rest_framework.decorators import authentication_classes
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 
 BASE_URL = 'http://finlife.fss.or.kr/finlifeapi'
 API_KEY = '815324d1a571acce6fbe7341cfa853f1'
@@ -94,6 +96,7 @@ def term_deposit(request):
 
 # 정기 예금 상세 조회
 @api_view(["GET"])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
 def term_deposit_detail(request,fin_prdt_cd):
     deposit = TermDeposit.objects.get(fin_prdt_cd=fin_prdt_cd)
     serializer = TermDepositSerializer(deposit)
@@ -186,6 +189,7 @@ def savings(request):
 
 # 적금 상세 조회asdf
 @api_view(["GET"])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
 def savings_detail(request,fin_prdt_cd):
     deposit = Savings.objects.get(fin_prdt_cd=fin_prdt_cd)
     serializer = SavingsSerializer(deposit)
