@@ -9,7 +9,13 @@
     </div>
 
     <div v-if="article && !loading" class="article-content">
-      <h1>{{ article.title }}</h1>
+      <div class="article-header">
+        <h1>{{ article.title }}</h1>
+        <div v-if="isArticleAuthor" class="article-admin-actions">
+          <button @click="editArticle" class="edit-button">수정</button>
+          <button @click="deleteArticle" class="delete-button">삭제</button>
+        </div>
+      </div>
       <div class="article-meta">
         <span>작성자: {{ article.author }}</span>
         <span>작성일: {{ formatDate(article.created_at) }}</span>
@@ -59,7 +65,8 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import articlesAPI from '../apis/articlesAPI'
 import { format } from 'date-fns'
 import { useAuthStore } from '../stores/auth'   
@@ -74,6 +81,8 @@ export default {
   },
 
   setup(props) {
+    const router = useRouter()
+    const authStore = useAuthStore()
     const article = ref(null)
     const comments = ref([])
     const newComment = ref('')
@@ -84,6 +93,7 @@ export default {
       try {
         loading.value = true
         article.value = await articlesAPI.getArticle(props.articleId)
+
         await fetchComments()
       } catch (error) {
         error.value = '게시글을 불러오는 데 실패했습니다.'
@@ -95,8 +105,8 @@ export default {
 
     const fetchComments = async () => {
       try {
-        const response = await articlesAPI.getComments(props.articleId)
-        comments.value = response
+        const response = await articlesAPI.getArticle(props.articleId)
+        comments.value = response.comment_set
       } catch (error) {
         console.error('댓글 로딩 에러:', error)
       }
@@ -144,9 +154,41 @@ export default {
     }
 
     const isCommentAuthor = (comment) => {
-      const authStore = useAuthStore();
-      return comment.user === authStore.username;
-    };
+      console.log('Comment user ID:', comment.user)
+      console.log('Current user ID:', authStore.user?.id)
+      return String(comment.user) === String(authStore.user?.id)
+    }
+
+    const isArticleAuthor = computed(() => {
+      console.log('Article data:', article.value)
+      console.log('Current user ID:', authStore.user?.id)
+      console.log('Article author ID:', article.value?.author)
+      
+      return String(article.value?.author) === String(authStore.user?.id)
+    })
+
+    const deleteArticle = async () => {
+      if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+        try {
+          await articlesAPI.deleteArticle(props.articleId)
+          router.push('/articles') // 삭제 후 목록으로 이동
+        } catch (error) {
+          console.error('게시글 삭제 에러:', error)
+        }
+      }
+    }
+
+    const editArticle = () => {
+      router.push(`/articles/${props.articleId}/edit`)
+    }
+
+    const isLiked = computed(() => {
+      return article.value?.liked_users?.includes(authStore.username)
+    })
+
+    const isDisliked = computed(() => {
+      return article.value?.disliked_users?.includes(authStore.username)
+    })
 
     onMounted(fetchArticle)
 
@@ -161,7 +203,12 @@ export default {
       submitComment,
       deleteComment,
       formatDate,
-      isCommentAuthor
+      isCommentAuthor,
+      isArticleAuthor,
+      deleteArticle,
+      editArticle,
+      isLiked,
+      isDisliked
     }
   }
 }
@@ -256,5 +303,43 @@ export default {
   color: #dc3545;
   text-align: center;
   padding: 20px;
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.article-admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .delete-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.edit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #218838;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
 }
 </style>

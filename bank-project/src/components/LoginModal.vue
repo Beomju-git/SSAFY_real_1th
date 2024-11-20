@@ -87,21 +87,36 @@ const handleLogin = async () => {
     isLoading.value = true
     error.value = ''
 
-    const response = await axios.post('http://localhost:8000/accounts/login/', {
+    const loginResponse = await axios.post('http://localhost:8000/accounts/login/', {
       username: loginForm.value.username,
       password: loginForm.value.password
     })
     
-    console.log('로그인 응답:', response.data)
+    const token = loginResponse.data.key
+    
+    const userResponse = await axios.get('http://localhost:8000/accounts/user/', {
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
 
-    if (response.data.key) {
-      authStore.token = response.data.key
-      loginForm.value = { username: '', password: '' }
-      props.closeModal()
-    } else {
-      error.value = '로그인 실패: 토큰이 없습니다'
-      console.error('토큰 없음:', response.data)
+    authStore.token = token
+    authStore.user = {
+      id: userResponse.data.pk,
+      username: loginForm.value.username
     }
+
+    authStore.userId = userResponse.data.pk
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify({
+      id: userResponse.data.pk,
+      username: loginForm.value.username
+    }))
+    localStorage.setItem('userId', userResponse.data.pk)
+
+    loginForm.value = { username: '', password: '' }
+    props.closeModal()
+    
   } catch (err) {
     console.error('로그인 에러:', err.response?.data || err)
     error.value = err.response?.data?.non_field_errors?.[0] || 
