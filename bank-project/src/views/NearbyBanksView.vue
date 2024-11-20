@@ -1,30 +1,40 @@
 <template>
-  <div class="map_wrap">
-    <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden;"></div>
-    <div id="menu_wrap" class="bg_white">
-      <div class="option">
-        <form @submit.prevent="searchPlaces">
-          키워드:
-          <input type="text" v-model="keyword" id="keyword" size="15" />
-          <button type="submit">검색하기</button>
-        </form>
+  <div class="container">
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          v-model="keyword" 
+          placeholder="지역을 검색해보세요"
+          @keyup.enter="searchPlaces"
+        />
+        <button @click="searchPlaces">검색</button>
       </div>
-      <hr />
-      <ul id="placesList">
-        <li v-for="(place, index) in places" :key="index" class="item" @mouseover="displayInfowindow(index)" @mouseout="closeInfowindow" @click="moveToLocation(index)">
-          <span :class="'markerbg marker_' + (index + 1)" :style="{ backgroundPosition: '0px -' + (index * 46) + 'px' }"></span>
-          <div class="info">
-            <h5>{{ place.place_name }}</h5>
-            <span v-if="place.road_address_name">{{ place.road_address_name }}</span>
-            <span class="jibun gray">{{ place.address_name }}</span>
-            <span class="tel">{{ place.phone }}</span>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="map-container">
+        <div id="map"></div>
+        
+        <div class="result-panel">
+          <div class="result-list">
+            <div 
+              v-for="(place, index) in places" 
+              :key="index"
+              class="result-item"
+              :class="{ active: selectedIndex === index }"
+              @click="selectPlace(index)"
+              @mouseover="displayInfowindow(index)"
+              @mouseout="closeInfowindow"
+            >
+              <div class="marker-number">{{ index + 1 }}</div>
+              <div class="place-info">
+                <h3>{{ place.place_name }}</h3>
+                <p>{{ place.road_address_name || place.address_name }}</p>
+              </div>
+            </div>
           </div>
-        </li>
-      </ul>
-      <div id="pagination">
-        <a v-for="page in paginationPages" :key="page" href="#" @click.prevent="gotoPage(page)" :class="{ on: page === currentPage }">
-          {{ page }}
-        </a>
+        </div>
       </div>
     </div>
   </div>
@@ -42,6 +52,7 @@ export default {
       markers: [],
       pagination: null,
       currentPage: 1,
+      selectedIndex: null,
     };
   },
   computed: {
@@ -72,7 +83,7 @@ export default {
         return;
       }
 
-      this.ps.keywordSearch(this.keyword +'은행', (data, status, pagination) => {
+      this.ps.keywordSearch(this.keyword + '은행', (data, status, pagination) => {
         if (status === kakao.maps.services.Status.OK) {
           this.places = data;
           this.pagination = pagination;
@@ -84,20 +95,24 @@ export default {
         }
       });
     },
+    selectPlace(index) {
+      this.selectedIndex = index;
+      this.moveToLocation(index);
+    },
     moveToLocation(index) {
-    const kakao = window.kakao;
+      const kakao = window.kakao;
 
-    // 클릭된 장소의 좌표 가져오기
-    const position = new kakao.maps.LatLng(this.places[index].y, this.places[index].x);
+      // 클릭된 장소의 좌표 가져오기
+      const position = new kakao.maps.LatLng(this.places[index].y, this.places[index].x);
 
-    // 지도 중심을 해당 좌표로 이동
-    this.map.setCenter(position);
-    this.map.setLevel(3);
-    // 선택된 마커에 인포윈도우 표시
-    const content = `<div style="padding:5px;z-index:1;">${this.places[index].place_name}</div>`;
-    this.infowindow.setContent(content);
-    this.infowindow.open(this.map, this.markers[index]);
-  },
+      // 지도 중심을 해당 좌표로 이동
+      this.map.setCenter(position);
+      this.map.setLevel(3);
+      // 선택된 마커에 인포윈도우 표시
+      const content = `<div style="padding:5px;z-index:1;">${this.places[index].place_name}</div>`;
+      this.infowindow.setContent(content);
+      this.infowindow.open(this.map, this.markers[index]);
+    },
     displayMarkers() {
       const kakao = window.kakao;
       this.clearMarkers();
@@ -127,30 +142,28 @@ export default {
         position,
         image: markerImage,
       });
-      
+
       // 클릭 했을 때 마커에 창 띄우기
       kakao.maps.event.addListener(marker, "click", () => {
         this.displayInfowindow(index);
-        this.moveToLocation(index)
-          });
+        this.moveToLocation(index);
+      });
 
-          
       kakao.maps.event.addListener(marker, "mouseover", () => {
-          this.displayInfowindow(index);
-        });
+        this.displayInfowindow(index);
+      });
 
-        
       // 마우스를 떼었을 때 인포윈도우 닫기
       kakao.maps.event.addListener(marker, "mouseout", () => {
         this.closeInfowindow();
       });
-      
+
       marker.setMap(this.map);
       return marker;
     },
     displayInfowindow(index) {
       const kakao = window.kakao;
-      const content = `<div style="padding:5px;z-index:1;">${index+1}. ${this.places[index].place_name}</div>`;
+      const content = `<div style="padding:5px;z-index:1;">${index + 1}. ${this.places[index].place_name}</div>`;
       this.infowindow.setContent(content);
       this.infowindow.open(this.map, this.markers[index]);
     },
@@ -167,92 +180,162 @@ export default {
     },
   },
 };
-
 </script>
 
 <style scoped>
-.map_wrap {
-  position: relative;
-  width: 100%;
-  height: 500px;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
-.map_wrap * {
-  margin: 0;
-  padding: 0;
-  font-family: "Malgun Gothic", dotum, "돋움", sans-serif;
-  font-size: 12px;
+
+.search-container {
+  margin-bottom: 16px;
 }
-.map_wrap a,
-.map_wrap a:hover,
-.map_wrap a:active {
-  color: #000;
-  text-decoration: none;
+
+.search-box {
+  display: flex;
+  gap: 8px;
+  max-width: 400px;
 }
-#menu_wrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 250px;
-  margin: 10px 0 30px 10px;
-  padding: 5px;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.7);
-  z-index: 1;
-  font-size: 12px;
-  border-radius: 10px;
+
+.search-box input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  background: #f9f9f9;
+  transition: all 0.2s;
 }
-#menu_wrap hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 2px solid #5f5f5f;
-  margin: 3px 0;
+
+.search-box input:focus {
+  background: white;
+  border-color: #3182f6;
 }
-#placesList li {
-  list-style: none;
-}
-.item {
-  position: relative;
-  border-bottom: 1px solid #888;
-  overflow: hidden;
+
+.search-box button {
+  padding: 0 24px;
+  background: #3182f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
-  min-height: 65px;
+  transition: background 0.2s;
 }
-.item span {
-  display: block;
-  margin-top: 4px;
+
+.search-box button:hover {
+  background: #1c6def;
 }
-.item h5,
-.item .info {
-  text-overflow: ellipsis;
+
+.content-wrapper {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   overflow: hidden;
+}
+
+.map-container {
+  position: relative;
+  height: 600px;
+  display: flex;
+}
+
+#map {
+  flex: 1;
+  height: 100%;
+}
+
+.result-panel {
+  width: 320px;
+  background: white;
+  border-left: 1px solid #eee;
+  overflow-y: auto;
+}
+
+.result-list {
+  padding: 8px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.result-item:hover {
+  background: #f8f9fa;
+}
+
+.result-item.active {
+  background: #e7f1ff;
+}
+
+.marker-number {
+  width: 24px;
+  height: 24px;
+  background: #3182f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.place-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.place-info h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.item .info {
-  padding: 10px 0 10px 55px;
+
+.place-info p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.item .info .gray {
-  color: #8a8a8a;
+
+.custom-marker {
+  background: #3182f6;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.item .info .tel {
-  color: #009900;
-}
-.item .markerbg {
-  float: left;
-  position: absolute;
-  width: 36px;
-  height: 37px;
-  margin: 10px 0 0 10px;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png") no-repeat;
-}
-#pagination a {
-  display: inline-block;
-  margin-right: 10px;
-}
-#pagination .on {
-  font-weight: bold;
-  cursor: default;
-  color: #777;
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .map-container {
+    height: 400px;
+  }
+
+  .result-panel {
+    width: 280px;
+  }
 }
 </style>
