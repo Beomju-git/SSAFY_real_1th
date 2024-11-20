@@ -50,6 +50,7 @@
           <RouterLink :to="{name:'products_detail', params:{fin_prdt_cd: item.fin_prdt_cd}}">
             <td class="px-4 py-3 border-b">{{ formatDate(item.dcls_strt_day) }}</td>
             <td class="px-4 py-3 border-b" >{{ item.kor_co_nm }}</td>
+            <td class="px-4 py-3 border-b">{{ item.product_type }}</td>
             <td class="px-4 py-3 border-b">{{ item.fin_prdt_nm }}</td>
           </RouterLink>
             <td 
@@ -80,6 +81,7 @@ const sortOrder = ref('desc')
 const columns = [
   { key: 'dcls_strt_day', label: '공시일자', align: 'left' },
   { key: 'kor_co_nm', label: '은행명', align: 'left' },
+  { key: 'product_type', label: '상품유형', align: 'left' },
   { key: 'fin_prdt_nm', label: '상품명', align: 'left' },
   { key: '6', label: '6개월', align: 'right' },
   { key: '12', label: '12개월', align: 'right' },
