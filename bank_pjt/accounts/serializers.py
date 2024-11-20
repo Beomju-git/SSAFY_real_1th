@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     class UserArticleSerialzier(serializers.ModelSerializer):
         class Meta:
             model = Article
-            fields = ('id',)
+            fields = ('id','title',)
     # 작성한 글 목록
     article_set = UserArticleSerialzier(read_only= True, many=True)
     # 좋아요 싫어요 누른 글 목록 
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             model = Comment
             fields = ('id',)
     # 작성한 댓글 목록
-    article_set = CommentArticleSerialzier(read_only= True, many=True)
+    comment_set = CommentArticleSerialzier(read_only= True, many=True)
     # 좋아요 싫어요 누른 댓글 목록 
     likes_comments = CommentArticleSerialzier(read_only= True, many=True)
     dislikes_comments = CommentArticleSerialzier(read_only= True, many=True)    
@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email','phone_number','address','birth_date','major_bank',
             'article_set',
             'likes_articles','dislikes_articles','likes_comments','dislikes_comments',
+            'comment_set',
                 )
         # fields='__all__'
 
