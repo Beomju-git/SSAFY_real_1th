@@ -49,6 +49,7 @@ def article_detail(request, article_pk):
     
 # 전체 댓글 조회(게시글과 상관없이 모든 댓글) + 댓글 생성
 @api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
 def comments(request, article_pk):
     article = Article.objects.get(pk=article_pk)
     if request.method =='GET':
@@ -65,6 +66,7 @@ def comments(request, article_pk):
 
 # 단일 댓글 조회, 수정, 삭제제
 @api_view(['GET','PUT','DELETE'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
 def comment_detail(request,article_pk,comments_pk):
     comment = get_object_or_404(Comment, pk=comments_pk)
     article = get_object_or_404(Article, pk = article_pk)
@@ -81,7 +83,8 @@ def comment_detail(request,article_pk,comments_pk):
         return Response(status=status.HTTP_202_ACCEPTED)
 
 # 게시물 좋아요 누르기
-@api_view(['POST'])    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])    
 def article_like(request,article_pk):
     article = get_object_or_404(Article, pk= article_pk)
     if request.user in article.liked_users.all():
@@ -92,7 +95,8 @@ def article_like(request,article_pk):
         return Response({'message': '게시글 좋아요 추가'}, status=status.HTTP_201_CREATED)
 
 # 게시물 싫어요 누르기
-@api_view(['POST'])    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])    
 def article_dislike(request,article_pk):
     article = get_object_or_404(Article, pk= article_pk)
     if request.user in article.disliked_users.all():
@@ -104,7 +108,8 @@ def article_dislike(request,article_pk):
     
 
 # 댓글 좋아요 누르기
-@api_view(['POST'])    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])    
 def comment_like(request,article_pk,comments_pk):
     comment = get_object_or_404(Comment, pk= comments_pk)
     if request.user in comment.liked_users.all():
@@ -115,7 +120,8 @@ def comment_like(request,article_pk,comments_pk):
         return Response({'message': '댓글 좋아요 추가'}, status=status.HTTP_201_CREATED)
 
 # 댓글 싫어요 누르기
-@api_view(['POST'])    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])    
 def comment_dislike(request,article_pk,comments_pk):
     comment = get_object_or_404(Comment, pk= comments_pk)
     if request.user in comment.disliked_users.all():

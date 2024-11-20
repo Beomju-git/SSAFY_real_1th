@@ -72,6 +72,10 @@ const router = createRouter({
       component: () => import('../views/ProductsView.vue')
     },
     {
+      path: '/products/term_deposit/detail/:fin_prdt_cd',
+      name: 'products_detail',
+      component: () => import('../views/ProductsDetailView.vue')
+    },
       path: '/profile/:username',
       name: 'UserProfile',
       component: () => import('../views/UserProfileView.vue')

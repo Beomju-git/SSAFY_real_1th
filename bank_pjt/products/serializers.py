@@ -25,7 +25,7 @@ class TermDepositAllSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TermDeposit
-        fields= ('dcls_strt_day','kor_co_nm','fin_prdt_nm','termdepositoptions_set')           
+        fields= ('dcls_strt_day','kor_co_nm','fin_prdt_nm','termdepositoptions_set','fin_prdt_cd',)           
         
 #############################        
 # 적금 update
