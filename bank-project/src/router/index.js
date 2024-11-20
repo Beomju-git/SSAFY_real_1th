@@ -4,11 +4,9 @@
 라우팅(routing)이란?
 - 라우팅(Routing)은 애플리케이션에서 사용자 요청(URL)에 따라 특정 페이지나 컴포넌트로 연결하는 경로 지정의 과정을 말합니다. 
 
-
 네비게이션이란, 
--사용자가 한 페이지에서 다른 페이지로 이동하는 것을 의미합니다. 
+- 사용자가 한 페이지에서 다른 페이지로 이동하는 것을 의미합니다. 
 - 예를 들어, 은행 홈페이지에서 메인 페이지 → 로그인 페이지 → 계좌 상세 페이지로 이동하는 과정이 모두 네비게이션입니다.
-
 
 정적 라우팅이란?
 - 라우팅 경로가 고정되어있는 것을 의미합니다.
@@ -76,6 +74,7 @@ const router = createRouter({
       name: 'products_detail',
       component: () => import('../views/ProductsDetailView.vue')
     },
+    {
       path: '/profile/:username',
       name: 'UserProfile',
       component: () => import('../views/UserProfileView.vue')
