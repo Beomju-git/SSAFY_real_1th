@@ -29,7 +29,9 @@
                 </template>
                 <template v-else>
                     <div class="user-menu">
-                        <span class="username">{{ authStore.username }}</span>
+                        <router-link :to="`/profile/${authStore.username}`" class="username">
+                            {{ authStore.username }}
+                        </router-link>
                         <button @click="handleLogout" class="logout-button">로그아웃</button>
                     </div>
                 </template>

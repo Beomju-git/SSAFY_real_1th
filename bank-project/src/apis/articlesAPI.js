@@ -26,7 +26,12 @@ const articlesAPI = {
         return data;
     },
     deleteArticle: async (id) => {
-        await axios.delete(`${API_URL}${id}/`);
+        const authStore = useAuthStore()
+        await axios.delete(`${API_URL}${id}/`, {
+            headers: {
+                'Authorization': `Token ${authStore.token}`
+            }
+        });
     },
     likeArticle: async (articleId) => {
         const authStore = useAuthStore();
@@ -64,7 +69,7 @@ const articlesAPI = {
                 'Authorization': `Token ${authStore.token}`
             }
         });
-    }
+    },
 };
 
 export default articlesAPI;
