@@ -1,6 +1,6 @@
 <template>
     <div class="detail-container">
-      <h1 class="title">정기 예금 상세페이지</h1>
+      <h1 class="title">{{ detail.product_type }} 상세페이지</h1>
       <div class="detail-box">
         <p><strong>공시 시작일:</strong> {{ detail.dcls_strt_day }}</p>
         <p><strong>금융 회사명:</strong> {{ detail.kor_co_nm }}</p> 
@@ -9,10 +9,10 @@
         
         <p><strong>상세 설명:</strong><span class="detailed-description" v-html="formatDetail(detail.etc_note)"></span></p>
         <div v-if="!isZzimed">
-        <button @click.prevent="recommend()"> 찜 취소</button>
+        <button @click.prevent="recommend()"> 찜</button>
         </div>
         <div v-else>
-        <button @click.prevent="recommend()"> 찜</button>
+        <button @click.prevent="recommend()"> 찜 취소</button>
         </div>
       </div>
     </div>
@@ -128,7 +128,51 @@
     font-size: 1rem;
     white-space: pre-line; /* 줄바꿈 처리 */
   }
-  
+  button {
+  display: inline-block;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #1a73e8; /* 토스 스타일 블루 */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* 호버 및 클릭 효과 */
+button:hover {
+  background-color: #1666c1; /* 약간 더 어두운 블루 */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+  background-color: #124a94;
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 찜 취소 버튼 색상 */
+button:focus {
+  outline: none;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+/* 반응형 버튼 크기 조정 */
+@media (max-width: 768px) {
+  button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
   /* 반응형 디자인 */
   @media (max-width: 768px) {
     .detail-container {
