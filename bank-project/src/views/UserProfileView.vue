@@ -47,6 +47,22 @@
           </div>
         </div>
       </div>
+      <div class="profile-section">
+        <h2>추천 상품</h2>
+        <div v-if="loading" class="loading">
+          데이터를 불러오는 중...
+        </div>
+        <div v-else-if="zzimedProduct" class="no-content">
+          <div v-for="zzim in zzimedProduct" :key="zzim.fin_prdt_cd" class="article-item">
+            <router-link :to="`/products/term_deposit/detail/${zzim.fin_prdt_cd}/`">
+              <h3> {{zzim.kor_co_nm}} - {{ zzim.fin_prdt_nm }}</h3>
+            </router-link>
+          </div>          
+        </div>
+        <div v-else class="articles-list">
+          <p>선택한 상품이 없습니다.</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -72,7 +88,7 @@ export default {
     const userArticles = ref([])
     const userProfile = ref(null)
     const loading = ref(true)
-
+    const zzimedProduct = ref(null)
     const fetchUserData = async () => {
       try {
         // 1단계: username 확인
@@ -95,9 +111,10 @@ export default {
         // 6단계: 게시글 데이터 할당 전 확인
         console.log('6. Articles data before assignment:', profileResponse.article_set)
         userArticles.value = profileResponse.article_set || []
-        
+        zzimedProduct.value = profileResponse.zzim_product || '선택한 상품이 없습니다.'
         // 7단계: 게시글 데이터 할당 후 확인
         console.log('7. Final articles data:', userArticles.value)
+        console.log(profileResponse.zzim_product)
         
       } catch (error) {
         // 8단계: 에러 발생 시 상세 정보
@@ -122,7 +139,8 @@ export default {
       userArticles,
       userProfile,
       loading,
-      formatDate
+      zzimedProduct,
+      formatDate,
     }
   }
 }
