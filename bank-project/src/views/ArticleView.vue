@@ -158,7 +158,7 @@ export default {
       formData.append('title', this.newArticle.title)
       formData.append('description', this.newArticle.description)
       if (this.newArticle.image) {
-        formData.append('iamge', this.newArticle.image)
+        formData.append('image', this.newArticle.image)
       }
 
       try {

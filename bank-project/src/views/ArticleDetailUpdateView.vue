@@ -92,7 +92,7 @@
         const file = event.target.files[0];
         if (file) {
           article.value.image = file;
-        }
+        } 
       };
   
       onMounted(fetchArticle);

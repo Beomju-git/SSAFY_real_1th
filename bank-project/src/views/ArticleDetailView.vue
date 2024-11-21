@@ -20,10 +20,10 @@
         <span>작성자: {{ article.author }}</span>
         <span>작성일: {{ formatDate(article.created_at) }}</span>
       </div>
-      
+
       <div class="article-body">
         <p>{{ article.description }}</p>
-        <img v-if="article.image" :src="article.image" alt="게시글 이미지" />
+        <img v-if="article.image" :src="`${baseUrl}${article.image}`" alt="게시글 이미지" />
       </div>
 
       <div class="article-actions">
@@ -39,23 +39,33 @@
       <div class="comments-section">
         <h2>댓글</h2>
         <form @submit.prevent="submitComment" class="comment-form">
-          <textarea 
-            v-model="newComment" 
-            placeholder="댓글을 입력하세요"
-            required
-          ></textarea>
+          <textarea v-model="newComment" placeholder="댓글을 입력하세요" required></textarea>
           <button type="submit" :disabled="!newComment.trim()">댓글 작성</button>
         </form>
 
         <div class="comments-list">
           <div v-for="comment in comments" :key="comment.id" class="comment">
-            <div class="comment-header">
-              <span class="comment-author">{{ comment.user }}</span>
-              <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+            <div v-if="isUpdated && comment.id === editingCommentId"> 
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.user }} </span>
+                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+              </div>
+              <textarea v-model="editedCommentContent" placeholder="댓글 수정"></textarea>
+              <div class="comment-actions">
+                <button @click="saveCommentEdit(comment.id)" class="save-button">수정 저장</button>
+                <button @click="cancelEdit" class="cancel-button">수정 취소</button>
+              </div>
             </div>
-            <p class="comment-content">{{ comment.content }}</p>
-            <div v-if="isCommentAuthor(comment)" class="comment-actions">
-              <button @click="deleteComment(comment.id)" class="delete-button">삭제</button>
+            <div v-else>
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.user }}</span>
+                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+              </div>
+              <p class="comment-content">{{ comment.content }}</p>
+              <div v-if="isCommentAuthor(comment)" class="comment-actions">
+                <button @click="editComment(comment.id, comment.content)" class="edit-button">수정</button>
+                <button @click="deleteComment(comment.id)" class="delete-button">삭제</button>
+              </div>
             </div>
           </div>
         </div>
@@ -69,7 +79,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import articlesAPI from '../apis/articlesAPI'
 import { format } from 'date-fns'
-import { useAuthStore } from '../stores/auth'   
+import { useAuthStore } from '../stores/auth'
 
 export default {
   name: 'ArticleDetailView',
@@ -88,6 +98,10 @@ export default {
     const newComment = ref('')
     const loading = ref(false)
     const error = ref(null)
+    const baseUrl = articlesAPI.base_URL
+    const editedCommentContent = ref('')
+    const isUpdated = ref(true)
+    const editingCommentId = ref(null)
 
     const fetchArticle = async () => {
       try {
@@ -149,21 +163,41 @@ export default {
       }
     }
 
+    const editComment = async (commentId, content) => {
+      try {
+        await articlesAPI.updateComment(props.articleId, commentId, content)
+        await fetchComments()
+      } catch (error) {
+        console.error('댓글 수정 에러:', error)
+      }
+      editingCommentId.value = commentId
+      editedCommentContent.value = content
+    }
+
+    const cancelEdit = () => {
+      editingCommentId.value = null
+      editedCommentContent.value = ''
+    }
+
+    const saveCommentEdit = async (commentId) => {
+      try {
+        await articlesAPI.updateComment(props.articleId, commentId, { content: editedCommentContent.value })
+        await fetchComments()
+        cancelEdit()
+      } catch (error) {
+        console.error('댓글 수정 에러:', error)
+      }
+    }
+
     const formatDate = (date) => {
       return format(new Date(date), 'yyyy-MM-dd HH:mm')
     }
 
     const isCommentAuthor = (comment) => {
-      console.log('Comment user ID:', comment.user)
-      console.log('Current user ID:', authStore.user?.id)
       return String(comment.user) === String(authStore.user?.id)
     }
 
     const isArticleAuthor = computed(() => {
-      console.log('Article data:', article.value)
-      console.log('Current user ID:', authStore.user?.id)
-      console.log('Article author ID:', article.value?.author)
-      
       return String(article.value?.author) === String(authStore.user?.id)
     })
 
@@ -193,18 +227,25 @@ export default {
     onMounted(fetchArticle)
 
     return {
+      baseUrl,
       article,
       comments,
       newComment,
+      editedCommentContent,
       loading,
       error,
       handleLike,
       handleDislike,
       submitComment,
       deleteComment,
+      editComment,
+      cancelEdit,
+      saveCommentEdit,
       formatDate,
       isCommentAuthor,
+      isUpdated,
       isArticleAuthor,
+      editingCommentId,
       deleteArticle,
       editArticle,
       isLiked,
@@ -219,13 +260,25 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f9f9f9;
 }
 
 .article-content {
-  background-color: white;
+  background-color: #fff;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.article-header h1 {
+  margin: 0;
+  font-size: 2em;
 }
 
 .article-meta {
@@ -242,21 +295,14 @@ export default {
 }
 
 .action-button {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
+  padding: 10px 20px;
   border-radius: 4px;
-  background: white;
   cursor: pointer;
 }
 
 .action-button.active {
-  background-color: #2D60FF;
+  background-color: #007bff;
   color: white;
-  border-color: #2D60FF;
-}
-
-.comments-section {
-  margin-top: 40px;
 }
 
 .comment-form {
@@ -265,81 +311,35 @@ export default {
 
 .comment-form textarea {
   width: 100%;
-  min-height: 80px;
+  min-height: 100px;  /* 최소 높이 지정 */
+  max-height: 300px;  /* 최대 높이 지정 */
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
   margin-bottom: 10px;
-}
-
-.comment {
-  padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  font-size: 1em;
+  resize: vertical; /* 수직으로만 크기 조정 가능하도록 설정 */
 }
 
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  color: #666;
+.comment-actions {
+  margin-top: 10px;
+  text-align: right; /* 버튼을 우측 정렬 */
 }
 
-.delete-button {
-  color: #dc3545;
-  background: none;
-  border: none;
+.comment-actions button {
+  padding: 5px 10px;
   cursor: pointer;
-  font-size: 0.9em;
+  display: inline-block; /* 버튼들을 가로로 배치 */
 }
 
-.loading {
-  text-align: center;
-  padding: 20px;
-}
-
-.error-message {
-  color: #dc3545;
-  text-align: center;
-  padding: 20px;
-}
-
-.article-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.article-admin-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.edit-button, .delete-button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.edit-button {
-  background-color: #28a745;
+.comment-actions .save-button,
+.comment-actions .cancel-button {
+  background-color: #007bff;
   color: white;
 }
 
-.delete-button {
-  background-color: #dc3545;
+.comment-actions .delete-button {
+  background-color: red;
   color: white;
-}
-
-.edit-button:hover {
-  background-color: #218838;
-}
-
-.delete-button:hover {
-  background-color: #c82333;
 }
 </style>
