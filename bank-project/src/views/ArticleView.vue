@@ -15,8 +15,18 @@
       <div v-for="article in articles" :key="article.id" class="article-card">
         <router-link :to="`/articles/${article.id}`" class="article-link">
           <h2 class="article-title">{{ article.title }}</h2>
-          <p class="article-date">등록일: {{ formatDate(article.created_at) }}</p>
+          <p class="article-meta">
+            <span class="article-author">작성자: {{ article.author }}</span>
+            <span class="article-date">등록일: {{ formatDate(article.created_at) }}</span>
+          </p>
         </router-link>
+        <button 
+          v-if="isAuthor(article.author)" 
+          @click="deleteArticle(article.id)" 
+          class="delete-button"
+        >
+          삭제
+        </button>
       </div>
     </div>
 
@@ -167,6 +177,18 @@ export default {
 
     formatDate(date) {
       return format(new Date(date), 'yyyy-MM-dd HH:mm')
+    },
+
+    isAuthor(author) {
+      // 현재 사용자와 게시글/댓글 작성자를 비교하는 로직을 구현해야 합니다.
+      // 여기서는 간단하게 작성자 이름을 비교합니다.
+      return this.currentUser === author
+    },
+
+    deleteArticle(id) {
+      // 게시글 삭제 로직을 구현해야 합니다.
+      // 여기서는 간단하게 게시글 ID를 콘솔에 출력합니다.
+      console.log(`게시글 ${id}를 삭제했습니다.`)
     }
   }
 }
@@ -227,6 +249,18 @@ h1 {
 .article-title {
   font-size: 1.2rem;
   margin: 0;
+}
+
+.article-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.article-author {
+  color: #888;
+  font-size: 0.9rem;
 }
 
 .article-date {

@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <p>© 2023 JuukJuuk Bank. All rights reserved.</p>
+    <p>© 2024 JuukJuuk Bank. All rights reserved.</p>
   </footer>
 </template>
 
