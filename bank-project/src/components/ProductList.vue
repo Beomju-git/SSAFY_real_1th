@@ -19,9 +19,12 @@
             <th 
               v-for="column in columns" 
               :key="column.key"
-              @click="handleSort(column.key)"
+              @click="column.onClick ? column.onClick() : handleSort(column.key)"
               class="px-4 py-3 border-b cursor-pointer hover:bg-gray-200"
-              :class="column.align === 'right' ? 'text-right' : 'text-left'"
+              :class="[
+                column.align === 'right' ? 'text-right' : 'text-left',
+                sortKey === column.key ? 'bg-gray-200' : ''
+              ]"
             >
               <div class="flex items-center" :class="column.align === 'right' ? 'justify-end' : ''">
                 <span>{{ column.label }}</span>
@@ -45,14 +48,13 @@
           <tr 
             v-for="item in sortedAndFilteredData" 
             :key="`${item.fin_prdt_nm}-${item.dcls_strt_day}`"
-            class="hover:bg-gray-50"
+            class="hover:bg-gray-50 cursor-pointer"
+            @click="navigateToDetail(item.fin_prdt_cd)"
           >
-          <RouterLink :to="{name:'products_detail', params:{fin_prdt_cd: item.fin_prdt_cd}}">
             <td class="px-4 py-3 border-b">{{ formatDate(item.dcls_strt_day) }}</td>
-            <td class="px-4 py-3 border-b" >{{ item.kor_co_nm }}</td>
+            <td class="px-4 py-3 border-b">{{ item.kor_co_nm }}</td>
             <td class="px-4 py-3 border-b">{{ item.product_type }}</td>
             <td class="px-4 py-3 border-b">{{ item.fin_prdt_nm }}</td>
-          </RouterLink>
             <td 
               v-for="period in ['6', '12', '24', '36']" 
               :key="period"
@@ -70,34 +72,83 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useProductStore } from '@/stores/product'
-import { RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const productStore = useProductStore()
 const searchTerm = ref('')
-const sortKey = ref('dcls_strt_day')
-const sortOrder = ref('desc')
+const router = useRouter()
 
-// 컬럼 정의
+// 정렬 상태 변수들
+const currentSortPeriod = ref(null)  // 현재 정렬 기준 기간
+const sortDirection = ref('desc')    // 정렬 방향
+
+// computed 속성 수정
+const sortedAndFilteredData = computed(() => {
+  // 1. 원본 데이터 복사
+  let data = [...productStore.products]
+  
+  // 2. 검색어 필터링
+  if (searchTerm.value) {
+    const term = searchTerm.value.toLowerCase()
+    data = data.filter(item => 
+      item.fin_prdt_nm.toLowerCase().includes(term) ||
+      item.kor_co_nm.toLowerCase().includes(term)
+    )
+  }
+
+  // 3. 정렬
+  if (currentSortPeriod.value) {
+    data.sort((a, b) => {
+      const aRate = getInterestRate(a, currentSortPeriod.value, true)
+      const bRate = getInterestRate(b, currentSortPeriod.value, true)
+      
+      // '-' 값 처리
+      if (aRate === -1 && bRate === -1) return 0
+      if (aRate === -1) return 1
+      if (bRate === -1) return -1
+      
+      return sortDirection.value === 'desc' ? bRate - aRate : aRate - bRate
+    })
+  }
+  
+  return data
+})
+
+// 정렬 핸들러 함수들
+const handle6MonthClick = () => {
+  currentSortPeriod.value = '6'
+  sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+}
+
+const handle12MonthClick = () => {
+  currentSortPeriod.value = '12'
+  sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+}
+
+const handle24MonthClick = () => {
+  currentSortPeriod.value = '24'
+  sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+}
+
+const handle36MonthClick = () => {
+  currentSortPeriod.value = '36'
+  sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+}
+
+// columns 배열 수정
 const columns = [
-  { key: 'dcls_strt_day', label: '공시일자', align: 'left' },
-  { key: 'kor_co_nm', label: '은행명', align: 'left' },
-  { key: 'product_type', label: '상품유형', align: 'left' },
-  { key: 'fin_prdt_nm', label: '상품명', align: 'left' },
-  { key: '6', label: '6개월', align: 'right' },
-  { key: '12', label: '12개월', align: 'right' },
-  { key: '24', label: '24개월', align: 'right' },
-  { key: '36', label: '36개월', align: 'right' }
+  { key: 'dcls_strt_day', label: '공시일자', align: 'left', type: 'date' },
+  { key: 'kor_co_nm', label: '은행명', align: 'left', type: 'string' },
+  { key: 'product_type', label: '상품유형', align: 'left', type: 'string' },
+  { key: 'fin_prdt_nm', label: '상품명', align: 'left', type: 'string' },
+  { key: '6', label: '6개월', align: 'right', type: 'rate', onClick: handle6MonthClick },
+  { key: '12', label: '12개월', align: 'right', type: 'rate', onClick: handle12MonthClick },
+  { key: '24', label: '24개월', align: 'right', type: 'rate', onClick: handle24MonthClick },
+  { key: '36', label: '36개월', align: 'right', type: 'rate', onClick: handle36MonthClick }
 ]
 
-// 정렬 처리 함수
-const handleSort = (key) => {
-  if (sortKey.value === key) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortKey.value = key
-    sortOrder.value = 'asc'
-  }
-}
+// 불필요한 변수/함수 제거
+// sortKey, sortOrder, handleSort 제거
 
 // 날짜 포맷 함수
 const formatDate = (dateStr) => {
@@ -108,58 +159,53 @@ const formatDate = (dateStr) => {
 }
 
 // 금리 정보 가져오기
-const getInterestRate = (item, period) => {
+const getInterestRate = (item, period, asNumber = false) => {
   const option = item.termdepositoptions_set.find(opt => opt.save_trm === Number(period))
-  return option ? option.intr_rate + '%' : '-'
-}
-
-// 필터링 및 정렬된 데이터
-const sortedAndFilteredData = computed(() => {
-  let data = [...productStore.products]
   
-  // 검색어 필터링
-  if (searchTerm.value) {
-    const term = searchTerm.value.toLowerCase()
-    data = data.filter(item => 
-      item.fin_prdt_nm.toLowerCase().includes(term) ||
-      item.kor_co_nm.toLowerCase().includes(term)
-    )
+  // 값이 없거나 '-'인 경우
+  if (!option || !option.intr_rate || option.intr_rate === '-') {
+    return asNumber ? -1 : '-'
   }
 
-  // 정렬
-  return data.sort((a, b) => {
-    let aValue, bValue
-    
-    if (sortKey.value === 'dcls_strt_day' || sortKey.value === 'kor_co_nm' || sortKey.value === 'fin_prdt_nm') {
-      aValue = a[sortKey.value]
-      bValue = b[sortKey.value]
-    } else {
-      // 금리 정보로 정렬
-      aValue = getInterestRate(a, sortKey.value)
-      bValue = getInterestRate(b, sortKey.value)
-      
-      // '%' 제거하고 숫자로 변환
-      aValue = aValue === '-' ? -1 : parseFloat(aValue.replace('%', ''))
-      bValue = bValue === '-' ? -1 : parseFloat(bValue.replace('%', ''))
-    }
+  // 숫자로 변환
+  const rate = parseFloat(option.intr_rate)
+  if (isNaN(rate)) {
+    return asNumber ? -1 : '-'
+  }
 
-    if (sortOrder.value === 'asc') {
-      return aValue > bValue ? 1 : -1
-    }
-    return aValue < bValue ? 1 : -1
-  })
-})
+  return asNumber ? rate : rate.toFixed(2) + '%'
+}
+
+// 정렬을 위한 값 가져오기 함수
+const getSortValue = (item, key, type) => {
+  switch (type) {
+    case 'date':
+      return item[key] // 날짜는 YYYYMMDD 형식이라 문자열 비교로도 정상 정렬됨
+    case 'rate':
+      return getInterestRate(item, key, true)
+    case 'string':
+    default:
+      return item[key]?.toLowerCase() || ''
+  }
+}
 
 // 컴포넌트 마운트 시 데이터 로드
 onMounted(() => {
   productStore.fetchProducts()
 })
+
+// 새로 추가할 함수
+const navigateToDetail = (fin_prdt_cd) => {
+  router.push({
+    name: 'products_detail',
+    params: { fin_prdt_cd }
+  })
+}
 </script>
 
 <style scoped>
 .w-full {
-  padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: transparent;
 }
 
 /* 검색 필터 스타일링 */

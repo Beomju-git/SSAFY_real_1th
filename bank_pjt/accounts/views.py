@@ -28,4 +28,4 @@ def profile(request,user_id):
 def signout(request):
     request.user.delete()
     return Response({'message': '회원탈퇴'})
-    
+

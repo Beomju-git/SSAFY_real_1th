@@ -21,13 +21,12 @@ const userAPI = {
         return data
     },
 
-
-
-    updateUserProfile: async (userId, profileData) => {
+    updateProfile: async (userId, profileData) => {
         const authStore = useAuthStore()
         const { data } = await axios.put(`${API_URL}profile/${userId}/detail/`, profileData, {
             headers: {
-                'Authorization': `Token ${authStore.token}`
+                'Authorization': `Token ${authStore.token}`,
+                'Content-Type': 'application/json'
             }
         })
         return data
