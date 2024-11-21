@@ -39,7 +39,7 @@ def article_detail(request, article_pk):
         serializer = ArticleCreateSerializer(article)
         return Response(serializer.data)
     elif request.method =='PUT':
-        serializer = ArticleCreateSerializer(article, data=request.  data, partial=True)
+        serializer = ArticleCreateSerializer(article, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=request.user)
             return Response(serializer.data)
