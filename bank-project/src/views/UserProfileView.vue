@@ -5,6 +5,12 @@
     </div>
 
     <div class="profile-content">
+      <div class="article-header">
+        <div v-if="1" class="article-admin-actions">
+          <button @click="" class="edit-button">수정</button>
+          <button @click="" class="delete-button">삭제</button>
+        </div>
+      </div>
       <div class="profile-info" v-if="userProfile">
         <h2>회원 정보</h2>
         <div class="info-grid">
@@ -233,4 +239,36 @@ export default {
   min-width: 100px;
   color: #666;
 }
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.edit-button, .delete-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.edit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #218838;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
 </style>

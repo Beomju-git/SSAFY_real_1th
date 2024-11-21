@@ -22,8 +22,12 @@ const articlesAPI = {
         return data;
     },
     updateArticle: async (id, articleData) => {
-        const { data } = await axios.put(`${API_URL}${id}/`, articleData);
-        return data;
+        const authStore = useAuthStore()
+        const { data } = await axios.put(`${API_URL}${id}/`, articleData,{
+            headers: {
+                'Authorization': `Token ${authStore.token}`
+            }
+        });
     },
     deleteArticle: async (id) => {
         const authStore = useAuthStore()
