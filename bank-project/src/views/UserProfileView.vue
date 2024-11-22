@@ -3,9 +3,9 @@
     <div class="profile-header">
       <h1>{{ username }}님의 프로필</h1>
     </div>
-
     <div class="profile-content">
       <div class="profile-info" v-if="userProfile">
+        <!-- 조회 모드 -->
         <div v-if="!isEditing">
           <div class="article-header">
             <h2>회원 정보</h2>
@@ -36,7 +36,7 @@
             </div>
           </div>
         </div>
-
+        <!-- 수정 모드 -->
         <div v-else>
           <div class="article-header">
             <h2>회원 정보 수정</h2>
@@ -80,32 +80,18 @@
               <h3>비밀번호 변경</h3>
               <div class="info-item">
                 <span class="label">현재 비밀번호:</span>
-                <input 
-                  v-model="passwordForm.currentPassword" 
-                  type="password" 
-                  class="edit-input"
-                >
+                <input v-model="passwordForm.currentPassword" type="password" class="edit-input">
               </div>
               <div class="info-item">
                 <span class="label">새 비밀번호:</span>
-                <input 
-                  v-model="passwordForm.newPassword1" 
-                  type="password" 
-                  class="edit-input"
-                >
+                <input v-model="passwordForm.newPassword1" type="password" class="edit-input">
               </div>
               <div class="info-item">
                 <span class="label">새 비밀번호 확인:</span>
-                <input 
-                  v-model="passwordForm.newPassword2" 
-                  type="password" 
-                  class="edit-input"
-                >
+                <input v-model="passwordForm.newPassword2" type="password" class="edit-input">
               </div>
               <div class="password-actions">
-                <button @click="changePassword" class="password-change-button">
-                  비밀번호 변경
-                </button>
+                <button @click="changePassword" class="password-change-button">비밀번호 변경</button>
               </div>
             </div>
           </div>
@@ -114,12 +100,8 @@
 
       <div class="profile-section">
         <h2>작성한 게시글</h2>
-        <div v-if="loading" class="loading">
-          데이터를 불러오는 중...
-        </div>
-        <div v-else-if="userArticles.length === 0" class="no-content">
-          작성한 게시글이 없습니다.
-        </div>
+        <div v-if="loading" class="loading">데이터를 불러오는 중...</div>
+        <h4 v-else-if="userArticles.length === 0" class="no-content">작성한 게시글이 없습니다.</h4>
         <div v-else class="articles-list">
           <div v-for="(article, index) in userArticles" :key="article.id" class="article-item">
             <router-link :to="`/articles/${article.id}/`">
@@ -128,184 +110,239 @@
           </div>
         </div>
       </div>
-      <div class="profile-section">
+      <div class="profile-section2">
         <h2>추천 상품</h2>
-        <div v-if="loading" class="loading">
-          데이터를 불러오는 중...
-        </div>
-        <div v-else-if="zzimedProduct" class="no-content">
+        <div v-if="loading" class="loading">데이터를 불러오는 중...</div>
+        <div v-else-if="zzimedProduct.length" class="no-content">
           <div v-for="(zzim, index) in zzimedProduct" :key="zzim.fin_prdt_cd" class="article-item">
             <router-link :to="`/products/term_deposit/detail/${zzim.fin_prdt_cd}/`">
               <h3>{{ index+1 }}. {{zzim.kor_co_nm}} - {{ zzim.fin_prdt_nm }}</h3>
             </router-link>
-          </div>          
+            <div class="chart">
+          <Bar :data="chartData" :options="chartOptions" />
+         </div>
+          </div>
         </div>
         <div v-else class="articles-list">
-          <p>선택한 상품이 없습니다.</p>
+          <h4>선택한 상품이 없습니다.</h4>
         </div>
+
       </div>
+
     </div>
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from 'vue'
+<script setup>
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import userAPI from '../apis/userAPI'
 import { useAuthStore } from '../stores/auth'
 import axios from 'axios'
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
 
-const debuginfo = () => {
-  console.log(userAPI)
-}
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-export default {
-  name: 'UserProfileView',
+const route = useRoute()
+const authStore = useAuthStore()
+const username = ref(route.params.username)
+const userArticles = ref([])
+const userProfile = ref(null)
+const loading = ref(true)
+const zzimedProduct = ref(null)
+const isEditing = ref(false)
+const editedProfile = ref({})
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword1: '',
+  newPassword2: ''
+})
+
+
+const chartOptions = ref({
+  responsive: true,
+  plugins: {
+    title: {
+      display: true,
+      text: '상품별 이자율 그래프',
+      color: '#000000',
+      font: {
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        size: 20,
+        weight: '600'
+      },
+    },
+  },
   
-  setup() {
-    const route = useRoute()
-    const authStore = useAuthStore()
-    const username = ref(route.params.username)
-    const userArticles = ref([])
-    const userProfile = ref(null)
-    const loading = ref(true)
-    const zzimedProduct = ref(null)
-    const isEditing = ref(false)
-    const editedProfile = ref({})
-    const passwordForm = ref({
-      currentPassword: '',
-      newPassword1: '',
-      newPassword2: ''
-    })
-
-    const fetchUserData = async () => {
-      try {
-        // 1단계: username 확인
-        console.log('1. Username from route:', username.value)
-        
-        // 2단계: API 호출 전
-        console.log('2. Calling getUserProfile API...')
-        const profileResponse = await userAPI.getUserProfile(username.value)
-        
-        // 3단계: API 응답 전체 데이터 확인
-        console.log('3. Full API Response:', profileResponse)
-        
-        // 4단계: 프로필 데이터 할당 전 확인
-        console.log('4. Profile data before assignment:', profileResponse)
-        userProfile.value = profileResponse
-        
-        // 5단계: 프로필 데이터 할당 후 확인
-        console.log('5. Profile data after assignment:', userProfile.value)
-        
-        // 6단계: 게시글 데이터 할당 전 확인
-        console.log('6. Articles data before assignment:', profileResponse.article_set)
-        userArticles.value = profileResponse.article_set || []
-        zzimedProduct.value = profileResponse.zzim_product || '선택한 상품이 없습니다.'
-        // 7단계: 게시글 데이터 할당 후 확인
-        console.log('7. Final articles data:', userArticles.value)
-        console.log(profileResponse.zzim_product)
-        
-      } catch (error) {
-        // 8단계: 에러 발생 시 상세 정보
-        console.error('8. Error occurred:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status
-        })
-      } finally {
-        loading.value = false
-      }
-    }
-
-    const formatDate = (date) => {
-      return format(new Date(date), 'yyyy-MM-dd')
-    }
-
-    const startEditing = () => {
-      editedProfile.value = { ...userProfile.value }
-      isEditing.value = true
-    }
-
-    const cancelEdit = () => {
-      isEditing.value = false
-      editedProfile.value = {}
-    }
-
-    const saveChanges = async () => {
-      try {
-        const userId = localStorage.getItem('userId')
-        const response = await userAPI.updateProfile(
-          userId,
-          editedProfile.value
-        )
-        
-        if (response) {
-          userProfile.value = response
-          isEditing.value = false
-          alert('프로필이 성공적으로 수정되었습니다.')
-        }
-      } catch (error) {
-        console.error('프로필 수정 실패:', error)
-        alert('프로필 수정에 실패했습니다.')
-      }
-    }
-
-    const changePassword = async () => {
-      try {
-        if (passwordForm.value.newPassword1 !== passwordForm.value.newPassword2) {
-          alert('새 비밀번호가 일치하지 않습니다.')
-          return
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: '기간 (months)',
+        color: '#000000',
+         font: {
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          size: 14,
+          weight: '10000'
         }
 
-        const response = await axios.post(`http://localhost:8000/accounts/password/change/`, {
-          old_password: passwordForm.value.currentPassword,
-          new_password1: passwordForm.value.newPassword1,
-          new_password2: passwordForm.value.newPassword2
-        }, {
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        })
-
-        if (response.status === 200) {
-          alert('비밀번호가 성공적으로 변경되었습니다.')
-          passwordForm.value = {
-            currentPassword: '',
-            newPassword1: '',
-            newPassword2: ''
-          }
-        }
-      } catch (error) {
-        console.error('비밀번호 변경 실패:', error)
-        alert(error.response?.data?.old_password?.[0] || 
-              error.response?.data?.new_password1?.[0] || 
-              error.response?.data?.new_password2?.[0] || 
-              '비밀번호 변경에 실패했습니다.')
       }
-    }
-
-    onMounted(fetchUserData)
-
-    return {
-      username,
-      userArticles,
-      userProfile,
-      loading,
-      zzimedProduct,
-      formatDate,
-      isEditing,
-      editedProfile,
-      startEditing,
-      cancelEdit,
-      saveChanges,
-      passwordForm,
-      changePassword
+    },
+    y: {
+      title: {
+        display: true,
+        text: '이자율 (%)',
+        color: '#000000',
+        font: {
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          size: 14,
+          weight: '500'
+        }
+      },
+      beginAtZero: true
     }
   }
+})
+
+const labels = ref([])
+const datasets = ref([])
+
+// computed로 차트 데이터 관리
+const chartData = computed(() => ({
+  labels: labels.value,
+  datasets: datasets.value.map(dataset => ({
+    ...dataset,
+    backgroundColor: getRandomColor(0.5),
+    borderWidth: 1,
+    tension: 0.1
+  }))
+}))
+
+const getRandomColor = (alpha = 1) => {
+  const r = Math.floor(Math.random() * 255)
+  const g = Math.floor(Math.random() * 255)
+  const b = Math.floor(Math.random() * 255)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+const fetchUserData = async () => {
+  try {
+    const profileResponse = await userAPI.getUserProfile(username.value)
+    userProfile.value = profileResponse
+    
+    // 게시글 데이터 처리
+    if (profileResponse.article_set && Array.isArray(profileResponse.article_set)) {
+      userArticles.value = profileResponse.article_set
+    } else {
+      userArticles.value = []
+    }
+    
+    // 추천 상품 데이터 처리
+    if (profileResponse.zzim_product && Array.isArray(profileResponse.zzim_product)) {
+      zzimedProduct.value = profileResponse.zzim_product
+      
+      // 차트 데이터 처리
+      if (profileResponse.zzim_product.length > 0) {
+        // x축 라벨 설정 (기간)
+        labels.value = Array.from(new Set(
+          profileResponse.zzim_product.flatMap(product => 
+            product.termdepositoptions_set.map(option => option.save_trm)
+          )
+        )).sort((a, b) => a - b)
+
+        // 데이터셋 설정
+        datasets.value = profileResponse.zzim_product.map(product => ({
+          label: `${product.kor_co_nm} - ${product.fin_prdt_nm}`,
+          data: labels.value.map(term => {
+            const option = product.termdepositoptions_set.find(opt => opt.save_trm === term)
+            return option ? option.intr_rate : null
+          })
+        }))
+      }
+    } else {
+      zzimedProduct.value = null
+    }
+
+  } catch (error) {
+    console.error('Error:', error)
+    userArticles.value = []
+    zzimedProduct.value = null
+    labels.value = []
+    datasets.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const formatDate = (date) => format(new Date(date), 'yyyy-MM-dd')
+
+const startEditing = () => {
+  editedProfile.value = { ...userProfile.value }
+  isEditing.value = true
+}
+
+const cancelEdit = () => {
+  isEditing.value = false
+  editedProfile.value = {}
+}
+
+const saveChanges = async () => {
+  try {
+    const userId = localStorage.getItem('userId')
+    const response = await userAPI.updateProfile(userId, editedProfile.value)
+    if (response) {
+      userProfile.value = response
+      isEditing.value = false
+      alert('프로필이 성공적으로 수정되었습니다.')
+    }
+  } catch (error) {
+    console.error('프로필 수정 실패:', error)
+    alert('프로필 수정에 실패했습니다.')
+  }
+}
+
+const changePassword = async () => {
+  try {
+    if (passwordForm.value.newPassword1 !== passwordForm.value.newPassword2) {
+      alert('새 비밀번호가 일치하지 않습니다.')
+      return
+    }
+    const response = await axios.post(
+      'http://localhost:8000/accounts/password/change/',
+      {
+        old_password: passwordForm.value.currentPassword,
+        new_password1: passwordForm.value.newPassword1,
+        new_password2: passwordForm.value.newPassword2
+      },
+      {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (response.status === 200) {
+      alert('비밀번호가 성공적으로 변경되었습니다.')
+      passwordForm.value = {
+        currentPassword: '',
+        newPassword1: '',
+        newPassword2: ''
+      }
+    }
+  } catch (error) {
+    console.error('비밀번호 변경 실패:', error)
+    alert(error.response?.data?.old_password?.[0] || 
+          error.response?.data?.new_password1?.[0] || 
+          error.response?.data?.new_password2?.[0] || 
+          '비밀번호 변경에 실패했습니다.')
+  }
+}
+// onBeforeMount(fetchUserData)
+onMounted(fetchUserData)
 </script>
+
 
 <style scoped>
 .profile-container {
@@ -329,12 +366,32 @@ export default {
   background: #FFFFFF;
   border-radius: 16px;
   padding: 32px;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 20px;
+  margin-bottom: 10px;
   border: 1px solid #E5E8EB;
 }
 
+
 .profile-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #191F28;
+  margin-bottom: 32px;
+  position: relative;
+  display: inline-block;
+}
+
+.profile-section2 {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 20px;
+  margin-bottom: 80px;
+  border: 1px solid #E5E8EB;
+}
+
+
+.profile-section2 h2 {
   font-size: 28px;
   font-weight: 700;
   color: #191F28;
@@ -373,7 +430,7 @@ export default {
 }
 
 .info-item {
-  margin-bottom: 20px; /* 간격 증가 */
+  margin-bottom: 1px; /* 간격 증가 */
 
   display: flex;
   align-items: center; /* 라벨과 입력 필드 수평 정렬 */
@@ -525,5 +582,9 @@ button {
 
 .password-change-button:hover{
   background-color: #033888c0;
+}
+
+.chart {
+  margin-bottom: 0px;
 }
 </style>

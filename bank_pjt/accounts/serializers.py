@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import User
 from articles.models import Comment, Article
-from products.models import TermDeposit
+from products.models import TermDeposit, TermDepositOptions
 
 class UserSerializer(serializers.ModelSerializer):
     class UserArticleSerialzier(serializers.ModelSerializer):
@@ -25,9 +25,17 @@ class UserSerializer(serializers.ModelSerializer):
     dislikes_comments = CommentArticleSerialzier(read_only= True, many=True)    
     
     class ZZimProdcutSerialzier(serializers.ModelSerializer):
+        class ZZimProductOptionSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = TermDepositOptions
+                fields = '__all__'
+        termdepositoptions_set = ZZimProductOptionSerializer(read_only= True, many=True)
+                
         class Meta:
             model = TermDeposit
-            fields = ('fin_prdt_cd', 'kor_co_nm', 'fin_prdt_nm',)
+            fields = ('fin_prdt_cd', 'kor_co_nm', 'fin_prdt_nm','termdepositoptions_set',)
+            
+            
     zzim_product = ZZimProdcutSerialzier(read_only= True, many=True)
 
     class Meta:

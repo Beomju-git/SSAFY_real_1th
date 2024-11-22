@@ -187,7 +187,7 @@ def term_deposit(request):
 @authentication_classes([TokenAuthentication, BasicAuthentication])
 def term_deposit_detail(request,fin_prdt_cd):
     deposit = TermDeposit.objects.get(fin_prdt_cd=fin_prdt_cd)
-    serializer = TermDepositSerializer(deposit)
+    serializer = TermDepositDetailSerializer(deposit)
     return Response(serializer.data)
 
 
