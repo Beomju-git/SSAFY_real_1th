@@ -38,19 +38,23 @@
       <!-- 댓글 섹션 -->
       <div class="comments-section">
         <h2>댓글</h2>
-        <form @submit.prevent="submitComment" class="comment-form">
-          <textarea v-model="newComment" placeholder="댓글을 입력하세요" required></textarea>
-          <button type="submit" :disabled="!newComment.trim()">댓글 작성</button>
-        </form>
+        <div class="comment-input">
+          <form @submit.prevent="submitComment" class="comment-form">
+            <textarea v-model="newComment" placeholder="댓글을 입력하세요" required></textarea>
+            <button class='comment-button' type="submit" :disabled="!newComment.trim()">댓글 작성</button>
+          </form>
+        </div>
 
         <div class="comments-list">
           <div v-for="comment in comments" :key="comment.id" class="comment">
             <div v-if="isUpdated && comment.id === editingCommentId"> 
               <div class="comment-header">
-                <span class="comment-author">{{ comment.user }} </span>
+                <span class="comment-author">{{ comment.user }} - </span>
                 <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
               </div>
-              <textarea v-model="editedCommentContent" placeholder="댓글 수정"></textarea>
+              <div class="comment-form">
+              <textarea v-model="editedCommentContent" placeholder="댓글 수정" ></textarea>
+            </div>
               <div class="comment-actions">
                 <button @click="saveCommentEdit(comment.id)" class="save-button">수정 저장</button>
                 <button @click="cancelEdit" class="cancel-button">수정 취소</button>
@@ -257,9 +261,10 @@ export default {
 
 <style scoped>
 .article-detail {
-  max-width: 800px;
+  max-width: 40%;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 130px;
   background-color: #f9f9f9;
 }
 
@@ -292,12 +297,22 @@ export default {
   margin: 20px 0;
   display: flex;
   gap: 10px;
+  justify-content: center; /* 버튼을 가로로 가운데 정렬 */
+  position: relative;
 }
 
 .action-button {
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  border: none;
+  background-color: transparent; /* 배경색 없애기 */
+  color: inherit; /* 부모의 텍스트 색상 상속 */
+}
+
+.action-button:hover {
+  background-color: #ebebeb;
+  border-radius: 10px;
 }
 
 .action-button.active {
@@ -310,15 +325,14 @@ export default {
 }
 
 .comment-form textarea {
-  width: 100%;
-  min-height: 100px;  /* 최소 높이 지정 */
-  max-height: 300px;  /* 최대 높이 지정 */
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1em;
-  resize: vertical; /* 수직으로만 크기 조정 가능하도록 설정 */
+  width: 98%; /* 부모 요소의 너비에 맞게 설정 */
+  height: auto; /* 고정된 높이 설정 */
+  resize: none; /* 크기 조절을 비활성화 */
+  padding: 10px; /* 여백 설정 */
+  margin-right: 10px;
+  border: 1px solid #ccc; /* 테두리 설정 */
+  border-radius: 5px; /* 둥근 테두리 설정 */
+  font-size: 14px; /* 글자 크기 설정 */
 }
 
 .comment-actions {
@@ -332,14 +346,70 @@ export default {
   display: inline-block; /* 버튼들을 가로로 배치 */
 }
 
+.article-admin-actions .edit-button,
 .comment-actions .save-button,
-.comment-actions .cancel-button {
-  background-color: #007bff;
+.comment-actions .edit-button {
+  background-color: #0061f2c0; /* 토스 느낌의 파란색 */
   color: white;
+  border: none;
+  margin-right: 10px;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 줄이기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
 }
 
-.comment-actions .delete-button {
-  background-color: red;
+.article-admin-actions .delete-button,
+.comment-actions .delete-button,
+.comment-actions .cancel-button {
+  background-color: #72b8e7; /* 채도가 낮고 깊이가 있는 빨간색 */
   color: white;
+  border: none;
+  margin-right: 10px;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 줄이기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
 }
+
+.comment-button {
+  background-color: #95a5a6; /* 부드럽고 자연스러운 회색 톤 */
+  color: rgb(29, 29, 29);
+  border: none;
+  margin-right: 10px;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
+}
+
+.comment-button:hover {
+  background-color: #6e7a7a; 
+}
+
+.edit-button:hover,
+.save-button:hover
+ {
+    background-color: #033888c0;
+  }
+  
+  .cancel-button:hover,
+  .delete-button:hover {
+    background-color: #406883
+  }
+  
+  .article-body{
+    width: 80%; /* 가로 폭을 부모 요소에 맞게 100%로 설정 */
+    height: auto; /* 세로는 자동으로 비율을 맞추어 크기 조정 */
+  }
+
 </style>

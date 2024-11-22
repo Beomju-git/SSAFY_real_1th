@@ -18,7 +18,7 @@
     </section>
 
     <!-- 서비스 섹션 -->
-    <section class="services">
+    <section class="services a">
       <div class="container">
         <h2 class="section-title">주요 서비스</h2>
         <div class="service-grid">
@@ -26,15 +26,52 @@
             v-for="service in services"
             :key="service.id"
             class="service-card"
-            @click="navigateToService(service.id)"
+
           >
-            <div class="service-content">
+          <div v-if="service.title === '환율 계산'">
+            <RouterLink :to="{name:'exchange'}">
+              <div class="service-content">
               <div class="service-icon">
                 <i :class="service.icon"></i>
               </div>
               <h3>{{ service.title }}</h3>
               <p>{{ service.description }}</p>
             </div>
+            </RouterLink>
+          </div>
+          <div v-else-if="service.title === '주변 은행찾기'">
+            <RouterLink :to="{name:'nearby-banks'}">
+              <div class="service-content">
+              <div class="service-icon">
+                <i :class="service.icon"></i>
+              </div>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+            </RouterLink>
+          </div>
+          <div v-else-if="service.title === '커뮤니티'">
+            <RouterLink :to="{name:'articles'}">
+              <div class="service-content">
+              <div class="service-icon">
+                <i :class="service.icon"></i>
+              </div>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+            </RouterLink>
+          </div>
+          <div v-else-if="service.title === '맞춤 추천'">
+            <RouterLink :to="{name:'product-recommendation'}">
+              <div class="service-content">
+              <div class="service-icon">
+                <i :class="service.icon"></i>
+              </div>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+            </RouterLink>
+          </div>
           </div>
         </div>
       </div>
@@ -45,6 +82,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { RouterLink } from "vue-router";
 
 const router = useRouter();
 
@@ -215,5 +253,13 @@ section {
   .container {
     padding: 0 2rem;
   }
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
 }
 </style>

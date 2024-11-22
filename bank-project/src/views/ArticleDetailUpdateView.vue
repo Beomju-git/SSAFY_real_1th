@@ -152,29 +152,33 @@
   
   .update-button,
   .cancel-button {
-    padding: 8px 16px;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 50px; /* 더 둥근 모서리 */
+    padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+    font-size: 14px; /* 글씨 크기 줄이기 */
     font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+    transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
   }
   
   .update-button {
-    background-color: #28a745;
-    color: white;
+  background-color: #0061f2c0; /* 토스 느낌의 파란색 */
+  color: white;
   }
   
   .cancel-button {
-    background-color: #dc3545;
+    background-color: #72b8e7; /* 채도가 낮고 깊이가 있는 빨간색 */
     color: white;
   }
   
   .update-button:hover {
-    background-color: #218838;
+    background-color: #033888c0;
   }
   
   .cancel-button:hover {
-    background-color: #c82333;
+    background-color: #406883
   }
   
   .loading {
