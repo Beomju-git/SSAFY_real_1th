@@ -194,9 +194,11 @@ export default {
 }
 
 .search-box {
+  position: relative;
   display: flex;
   gap: 8px;
   max-width: 400px;
+  margin-left: auto; /* 오른쪽으로 밀기 */
 }
 
 .search-box input {
