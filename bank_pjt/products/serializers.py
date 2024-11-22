@@ -1,5 +1,19 @@
 from rest_framework import serializers
 from .models import TermDeposit, TermDepositOptions, Savings, SavingsOptions, LoanProducts, LoanOptions, CreditLoanProducts, CreditLoanOptions
+from .models import TextTermDeposit, TextTermDepositOptions
+# 정기 예금 text update
+class TextTermDepositSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextTermDeposit
+        fields='__all__'
+        
+# 정기 예금 text option update
+class TextTermDepositOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextTermDepositOptions
+        fields='__all__'
+        read_only_fields =('product',)
+
 
 # 정기 예금 update
 class TermDepositSerializer(serializers.ModelSerializer):
@@ -27,6 +41,18 @@ class TermDepositAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = TermDeposit
         fields= ('product_type', 'dcls_strt_day','kor_co_nm','fin_prdt_nm','termdepositoptions_set','fin_prdt_cd', )           
+        
+# 정기 예금 상세 조회     
+class TermDepositDetailSerializer(serializers.ModelSerializer):
+    class TermDepositOptionTermSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = TermDepositOptions
+            fields=('save_trm', 'intr_rate',)
+    termdepositoptions_set =TermDepositOptionTermSerializer(read_only= True, many=True)
+    
+    class Meta:
+        model = TermDeposit
+        fields= ('product_type', 'dcls_strt_day','kor_co_nm','fin_prdt_nm','termdepositoptions_set','fin_prdt_cd', )             
         
 #############################        
 # 적금 update

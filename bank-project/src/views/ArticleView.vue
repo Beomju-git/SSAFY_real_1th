@@ -16,7 +16,8 @@
         <router-link :to="`/articles/${article.id}`" class="article-link">
           <h2 class="article-title">{{ article.title }}</h2>
           <p class="article-meta">
-            <span class="article-author">작성자: {{ article.author }}</span>
+            <span class="article-author">작성자: {{ article.author.username }}</span>
+
             <span class="article-date">등록일: {{ formatDate(article.created_at) }}</span>
           </p>
         </router-link>
@@ -90,9 +91,11 @@
 <script>
 import articlesAPI from '../apis/articlesAPI'
 import { format } from 'date-fns'
+import { useAuthStore } from '@/stores/auth';
+
 
 export default {
-  name: 'ArticleView',
+  name:   'ArticleView',
   
   data() {
     return {
@@ -189,6 +192,13 @@ export default {
       // 게시글 삭제 로직을 구현해야 합니다.
       // 여기서는 간단하게 게시글 ID를 콘솔에 출력합니다.
       console.log(`게시글 ${id}를 삭제했습니다.`)
+    }
+  },
+  setup() {
+    
+    const authStore = useAuthStore() 
+    return {
+      authStore
     }
   }
 }

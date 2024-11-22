@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     # 정기 예금 가져오기
     path('term_deposit/update/', views.term_deposit_update, name='term_deposit_update'),
+    path('term_deposit_text/update/', views.term_deposit_text_update, name='term_deposit_text_update'),
     # 정기 예금 전체 조회( 정기 예금 상품의 기간 별 금리 포함)
     path('term_deposit/', views.term_deposit, name='term_deposit'),
     # 상품 찜 하기

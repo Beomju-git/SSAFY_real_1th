@@ -121,9 +121,9 @@
           작성한 게시글이 없습니다.
         </div>
         <div v-else class="articles-list">
-          <div v-for="article in userArticles" :key="article.id" class="article-item">
+          <div v-for="(article, index) in userArticles" :key="article.id" class="article-item">
             <router-link :to="`/articles/${article.id}/`">
-              <h3>{{ article.title }}</h3>
+              <h3>{{ index+1 }}. 제목 : {{ article.title }}</h3>
             </router-link>
           </div>
         </div>
@@ -134,9 +134,9 @@
           데이터를 불러오는 중...
         </div>
         <div v-else-if="zzimedProduct" class="no-content">
-          <div v-for="zzim in zzimedProduct" :key="zzim.fin_prdt_cd" class="article-item">
+          <div v-for="(zzim, index) in zzimedProduct" :key="zzim.fin_prdt_cd" class="article-item">
             <router-link :to="`/products/term_deposit/detail/${zzim.fin_prdt_cd}/`">
-              <h3> {{zzim.kor_co_nm}} - {{ zzim.fin_prdt_nm }}</h3>
+              <h3>{{ index+1 }}. {{zzim.kor_co_nm}} - {{ zzim.fin_prdt_nm }}</h3>
             </router-link>
           </div>          
         </div>
@@ -373,9 +373,10 @@ export default {
 }
 
 .info-item {
+  margin-bottom: 20px; /* 간격 증가 */
+
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: center; /* 라벨과 입력 필드 수평 정렬 */
 }
 
 .label {
@@ -389,6 +390,7 @@ export default {
   flex: 1;
   height: 48px;
   padding: 0 16px;
+  margin-left : 10px;
   border: 1px solid #E5E8EB;
   border-radius: 8px;
   font-size: 16px;
@@ -411,9 +413,17 @@ button {
 }
 
 .edit-button {
-  background: #2D60FF;
-  color: #FFFFFF;
+  background-color: #0061f2c0; /* 토스 느낌의 파란색 */
+  color: white;
   border: none;
+  margin-right: 10px;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 줄이기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
 }
 
 .edit-button:hover {
@@ -421,13 +431,22 @@ button {
 }
 
 .delete-button {
-  background: #FFFFFF;
-  color: #F04452;
-  border: 1px solid #E5E8EB;
+  background-color: #72b8e7; /* 채도가 낮고 깊이가 있는 빨간색 */
+  color: white;
+  border: none;
+  margin-right: 10px;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 줄이기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
 }
 
 .delete-button:hover {
-  background: #F9FAFB;
+  background-color: #406883;
+  color : red
 }
 
 .password-change-section {
@@ -443,10 +462,9 @@ button {
   margin-bottom: 24px;
 }
 
-.no-content, .loading {
-  text-align: center;
-  padding: 48px 0;
-  color: #8B95A1;
+.no-content, .loading, .articles-list {
+  text-align: left;
+  color: #000000;
   font-size: 16px;
 }
 
@@ -468,5 +486,44 @@ button {
   .edit-input {
     width: 100%;
   }
+}
+.articles-list .article-item a {
+  text-decoration: none; /* 밑줄 제거 */
+  color: inherit; /* 기본 텍스트 색상 상속 */
+}
+
+/* 링크를 클릭했을 때 효과도 제거 */
+.articles-list .article-item a:hover {
+  text-decoration: none; /* hover 시에도 밑줄 제거 */
+  color: inherit; /* hover 시 색상 변경되지 않도록 */
+}
+.no-content .article-item a {
+  text-decoration: none; /* 밑줄 없애기 */
+  color: inherit; /* 텍스트 색상 상속 */
+}
+
+.no-content .article-item a:hover {
+  color: inherit; /* 마우스 오버 시 색상 변경을 방지 */
+}
+.password-change-button {
+  background-color: #0061f2c0; /* 토스 느낌의 파란색 */
+  position: relative;
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  color: white;
+  border: none;
+  margin: auto;
+  border-radius: 50px; /* 더 둥근 모서리 */
+  padding: 6px 14px; /* 여백을 적당히 줄여서 크기 작게 */
+  font-size: 14px; /* 글씨 크기 줄이기 */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 효과 */
+  transition: all 0.3s ease; /* 모든 속성에 부드러운 전환 효과 */
+}
+
+.password-change-button:hover{
+  background-color: #033888c0;
 }
 </style>

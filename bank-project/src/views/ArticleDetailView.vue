@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="article-meta">
-        <span>작성자: {{ article.author }}</span>
+        <span>작성자: {{ article.author.username }}</span>
         <span>작성일: {{ formatDate(article.created_at) }}</span>
       </div>
 
@@ -49,8 +49,7 @@
           <div v-for="comment in comments" :key="comment.id" class="comment">
             <div v-if="isUpdated && comment.id === editingCommentId"> 
               <div class="comment-header">
-                <span class="comment-author">{{ comment.user }} - </span>
-                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+                <span class="comment-author">작성자 :{{ comment.user.username }}</span>
               </div>
               <div class="comment-form">
               <textarea v-model="editedCommentContent" placeholder="댓글 수정" ></textarea>
@@ -62,14 +61,15 @@
             </div>
             <div v-else>
               <div class="comment-header">
-                <span class="comment-author">{{ comment.user }}</span>
-                <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+                <span class="comment-author">작성자 :{{ comment.user.username }} /</span>
+                <span class="comment-date"> 작성일 : {{ formatDate(comment.created_at) }}</span>
               </div>
               <p class="comment-content">{{ comment.content }}</p>
               <div v-if="isCommentAuthor(comment)" class="comment-actions">
                 <button @click="editComment(comment.id, comment.content)" class="edit-button">수정</button>
                 <button @click="deleteComment(comment.id)" class="delete-button">삭제</button>
               </div>
+              <hr>
             </div>
           </div>
         </div>
@@ -198,11 +198,11 @@ export default {
     }
 
     const isCommentAuthor = (comment) => {
-      return String(comment.user) === String(authStore.user?.id)
+      return String(comment.user.id) === String(authStore.user?.id)
     }
 
     const isArticleAuthor = computed(() => {
-      return String(article.value?.author) === String(authStore.user?.id)
+      return String(article.value.author.id) === String(authStore.user?.id)
     })
 
     const deleteArticle = async () => {
@@ -253,7 +253,8 @@ export default {
       deleteArticle,
       editArticle,
       isLiked,
-      isDisliked
+      isDisliked,
+      authStore
     }
   }
 }
@@ -411,5 +412,8 @@ export default {
     width: 80%; /* 가로 폭을 부모 요소에 맞게 100%로 설정 */
     height: auto; /* 세로는 자동으로 비율을 맞추어 크기 조정 */
   }
+  .comment-header {
+  font-weight: bold; /* 글씨를 볼드체로 설정 */
+}
 
 </style>
