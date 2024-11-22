@@ -52,8 +52,8 @@ class TermDepositDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TermDeposit
-        fields= ('product_type', 'dcls_strt_day','kor_co_nm','fin_prdt_nm','termdepositoptions_set','fin_prdt_cd', )             
-        
+        fields= '__all__'
+        read_only_fields =('zzimed_product',)
 #############################        
 # 적금 update
 class SavingsSerializer(serializers.ModelSerializer):
