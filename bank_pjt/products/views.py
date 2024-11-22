@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import requests
-from .models import TermDeposit, TermDepositOptions, Savings, SavingsOptions, LoanOptions, LoanProducts, CreditLoanProducts, CreditLoanOptions
-from .serializers import TermDepositSerializer, TermDepositOptionSerializer, TermDepositAllSerializer, SavingsSerializer, SavingsOptionSerializer, SavingsAllSerializer, LoanSerializer, LoanOptionSerializer, LoanAllSerializer, CreditLoanAllSerializer, CreditLoanOptionSerializer, CreditLoanSerializer
+from .models import TermDeposit, TermDepositOptions, Savings, SavingsOptions, LoanOptions, LoanProducts, CreditLoanProducts, CreditLoanOptions, TextTermDepositOptions, TextTermDeposit
+from .serializers import TermDepositSerializer, TermDepositOptionSerializer, TermDepositAllSerializer, SavingsSerializer, SavingsOptionSerializer, SavingsAllSerializer, LoanSerializer, LoanOptionSerializer, LoanAllSerializer, CreditLoanAllSerializer, CreditLoanOptionSerializer, CreditLoanSerializer,TermDepositDetailSerializer, TextTermDepositOptionSerializer, TextTermDepositSerializer
 # 회원가입을 위해
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
@@ -11,6 +11,87 @@ from rest_framework.authentication import TokenAuthentication, BasicAuthenticati
 BASE_URL = 'http://finlife.fss.or.kr/finlifeapi'
 API_KEY = '815324d1a571acce6fbe7341cfa853f1'
 # Create your views here.
+
+# 정기예금 text로 가져오기
+@api_view(['GET'])
+def term_deposit_text_update(request):
+    savings = ['depositProductsSearch','savingProductsSearch']
+    for saving in savings:
+        URL = f'http://finlife.fss.or.kr/finlifeapi/{saving}.json'   # 슬래시 수정
+        print(URL)
+        topFinGrpNos = [ '020000', '030300' ]# 은행, 저축은행
+        
+        for topFinGrpNo in topFinGrpNos:
+            params = {
+                'auth': API_KEY,  # 변수명 오타 수정 및 일관성 유지
+                'topFinGrpNo': topFinGrpNo,
+                'pageNo': 1
+            }
+            response = requests.get(URL, params=params).json()
+            products = response.get('result').get('baseList')
+            ## 예금 정보 저장
+            for product in products:
+                if saving == 'depositProductsSearch':
+                    product_type = '정기 예금'
+                else:
+                    product_type = '적금'
+                fin_prdt_cd = product.get('fin_prdt_cd',)
+                kor_co_nm = product.get('kor_co_nm')
+                fin_prdt_nm = product.get('fin_prdt_nm')
+                etc_note = product.get('etc_note' )
+                join_deny = str(product.get('join_deny'))
+                join_member =product.get('join_member')
+                join_way = product.get('join_way')
+                spcl_cnd = product.get('spcl_cnd')
+                dcls_strt_day = product.get('dcls_strt_day')
+                save_data ={
+                    'product_type':product_type,
+                    'fin_prdt_cd' : fin_prdt_cd,
+                    'kor_co_nm' : kor_co_nm,
+                    'fin_prdt_nm' : fin_prdt_nm,
+                    'etc_note': etc_note,
+                    'join_deny' : join_deny,
+                    'join_member': join_member,
+                    'join_way' : join_way,
+                    'spcl_cnd' : spcl_cnd,
+                    'dcls_strt_day':dcls_strt_day,
+                }
+                if TextTermDeposit.objects.filter(
+                    fin_prdt_cd = fin_prdt_cd, 
+                    ).exists():
+                    continue
+                serializer = TextTermDepositSerializer(data =save_data)
+                if serializer.is_valid(raise_exception= True):
+                    serializer.save()  
+                    
+            #option 저장
+            products_options = response.get('result').get('optionList') 
+            for option in products_options:
+                fin_prdt_cd = option.get('fin_prdt_cd',)
+                intr_rate_type_nm = option.get('intr_rate_type_nm')
+                intr_rate = str(option.get('intr_rate', -1))
+                intr_rate2 = str(option.get('intr_rate2',-1 ))
+                save_trm = str(option.get('save_trm'))
+                save_option_data ={
+                    'fin_prdt_cd' : fin_prdt_cd,
+                    'intr_rate_type_nm' : intr_rate_type_nm,
+                    'intr_rate' : intr_rate,
+                    'intr_rate2': intr_rate2,
+                    'save_trm' : save_trm,
+                }      
+                if TextTermDepositOptions.objects.filter(
+                    fin_prdt_cd = fin_prdt_cd, intr_rate_type_nm = intr_rate_type_nm, intr_rate = intr_rate,
+                    intr_rate2 = intr_rate2, save_trm = save_trm
+                    ).exists():
+                    continue
+                serializer = TextTermDepositOptionSerializer(data =save_option_data)
+                
+                product = TextTermDeposit.objects.get(fin_prdt_cd=fin_prdt_cd)
+                if serializer.is_valid(raise_exception = True):
+                    serializer.save(product = product)   
+            
+            
+    return Response({'message' : '검색 완료'})
 
 # 정기예금 가져오기
 @api_view(['GET'])

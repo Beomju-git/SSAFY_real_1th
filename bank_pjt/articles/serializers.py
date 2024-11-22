@@ -1,9 +1,15 @@
 from rest_framework import serializers
 from .models import Article, Comment
+from accounts.models import User
 
 
 # 게시글 전체 목록 조회 
 class ArticleListSerializer(serializers.ModelSerializer):
+    class UserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model =User
+            fields =('id', 'username',)
+    author = UserSerializer()
     class Meta:
         model = Article
         #  게시물 조회 시 게시물 모든 정보 던지기
@@ -14,11 +20,21 @@ class ArticleListSerializer(serializers.ModelSerializer):
 class ArticleCreateSerializer(serializers.ModelSerializer):
     # 단일 게시글 조회 시, 게시물에 달린 댓글 조회
     class ArticleCommentSerializer(serializers.ModelSerializer):
+        class UserSerializer(serializers.ModelSerializer):
+            class Meta:
+                model=User
+                fields =('username', 'id',)
+        user = UserSerializer()
         class Meta:
             model = Comment
             fields = '__all__'
-
     comment_set = ArticleCommentSerializer(read_only= True, many=True)
+    class UserInfoSerialzier(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields =('username', 'id',)
+    author =    UserInfoSerialzier()
+    
     # 단일 게시글 조회 시 좋아요, 싫어요 개수 출력
     liked_count = serializers.IntegerField(source='liked_users.count', read_only=True)
     disliked_count = serializers.IntegerField(source='disliked_users.count', read_only=True)

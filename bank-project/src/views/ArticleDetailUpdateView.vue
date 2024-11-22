@@ -53,6 +53,7 @@
   import { ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import articlesAPI from '../apis/articlesAPI';
+  import { useAuthStore } from '@/stores/auth';
   
   export default {
     name: 'ArticleUpdate',
@@ -62,6 +63,7 @@
       const article = ref({});
       const loading = ref(false);
       const error = ref(null);
+      const authStore = useAuthStore() 
   
       const fetchArticle = async () => {
         try {
@@ -101,6 +103,7 @@
         article,
         loading,
         error,
+        authStore,
         updateArticle,
         handleImageChange
       };
