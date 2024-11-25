@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'products',
     'articles',
     'accounts',
@@ -105,12 +106,19 @@ WSGI_APPLICATION = 'bank_pjt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # MariaDB의 경우 mysql 엔진 사용
+        'NAME': 'bank_db',
+        'USER': 'root',
+        'PASSWORD': 'Processor@3014',
+        'HOST': 'localhost',  # 또는 데이터베이스 호스트 주소
+        'PORT': '3306',       # 기본 포트
     }
 }
+
 
 
 # Password validation
@@ -158,3 +166,7 @@ MEDIA_URL = 'media/'
 
 
 AUTH_USER_MODEL= 'accounts.User'
+
+
+import os
+os.environ['GROQ_API_KEY'] = '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'  # 실제 API 키로 변경   

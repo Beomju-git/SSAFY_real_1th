@@ -1,0 +1,241 @@
+﻿가입금액,가입기간,이자지급방식,가입채널,중도해지이율,기타조건,original_index
+1만원 이상,1~36개월,NULL,NULL,NULL,"만기일을 일,월 단위로 자유롭게 선택 가능, 만기해지 시 신규일 당시 영업점과 인터넷 홈페이지에 고시된 계약기간별 금리 적용",0
+NULL,NULL,NULL,"인터넷, 모바일뱅킹",NULL,NULL,1
+계좌당 가입 최저한도 : 100만원,NULL,NULL,NULL,NULL,NULL,2
+계좌당 가입 최저한도 : 100만원,NULL,NULL,NULL,NULL,NULL,3
+계좌당 가입 최저한도 : 100만원,NULL,NULL,NULL,NULL,NULL,4
+계좌당 가입 최저한도 : 100만원,NULL,NULL,NULL,NULL,NULL,5
+1천만원 이상,1개월 이상 60개월 이하(일단위),월이자지급식/만기일시지급식,NULL,NULL,NULL,6
+1백만원 이상 제한없음 (원단위),"1개월, 3개월, 6개월, 1년, 2년, 3년",만기일시지급식,NULL,NULL,NULL,7
+1백만원 이상 제한없음 (원단위),"6개월, 1년",만기일시지급식,NULL,NULL,NULL,8
+5백만원이상 최고 50백만원,1년이상 3년제,NULL,NULL,NULL,NULL,9
+100만원이상,1개월이상 3년제,NULL,NULL,NULL,NULL,10
+1백만원이상 최고 1억원(1인1계좌),1년제,NULL,NULL,NULL,NULL,11
+"10백만원 이상, 고객당 10억원 한도","3개월, 6개월, 1년제",NULL,NULL,NULL,NULL,12
+1백만원 이상,NULL,NULL,NULL,NULL,NULL,13
+30만원 이상,NULL,NULL,NULL,NULL,NULL,14
+1백만원 이상,NULL,NULL,NULL,NULL,NULL,15
+"1계좌당 1백만원이상 10억원이하, 1인당 총 10억원 이하",NULL,NULL,인터넷/스마트폰뱅킹,NULL,NULL,16
+"1백만원 이상, 고객별 5억원 이상 (자동재예치시 이자 원가로 인한 5억원 초과는 가능)",NULL,NULL,"인터넷뱅킹, 모바일뱅킹, 모바일웹, BDT",NULL,계좌수 관계없이 가입가능,17
+1인당 최소 100만원 이상 5억원 이하,3개월 이상 2년 이내 월단위,NULL,NULL,NULL,NULL,18
+최소 1백만원 이상 최고 5억원 이하,"6개월, 1년, 2년",NULL,NULL,NULL,가입좌수 제한없음,19
+1인당 최소 100만원 이상 10억원 이하,12개월,NULL,NULL,NULL,NULL,20
+최소 1백만원 이상 통합한도 1억원 이내,NULL,NULL,NULL,NULL,계좌 수 제한 없음,21
+최소 1백만원 이상,NULL,NULL,NULL,NULL,계좌 수 제한 없음,22
+NULL,NULL,NULL,NULL,NULL,NULL,23
+1백만원 이상,NULL,NULL,NULL,NULL,NULL,24
+50만원 이상 1억원 이내,NULL,NULL,NULL,NULL,NULL,25
+1만원 이상,NULL,NULL,NULL,NULL,NULL,26
+NULL,NULL,NULL,NULL,NULL,"회전주기는 1개월 이상 12개월 이내 월단위로 선택 가능, 전월취급평균금리는 본 홈페이지에 공시되지 않는 회전기간 6개월 미만의 계좌들도 포함하여 산출하기 때문에 회전기간별로 공시된 기본금리보다 낮게 보여질 수 있음",27
+300만원 이상,NULL,NULL,NULL,NULL,"온실가스 줄이기 실천서약서 동의시 가입가능, 신규가입 계좌당 2천원씩 녹색환경기금 적립",28
+10만원 이상 10억원 이내,NULL,NULL,NULL,NULL,NULL,29
+100만원 이상,NULL,NULL,농협은행/농축협 영업점 또는 고향사랑e음 홈페이지,NULL,연간 판매액의 0.1% 공익기금 적립,30
+1백만원 이상,NULL,NULL,NULL,NULL,1인 최대 가입한도 제한 없음,31
+1백만원 이상,1개월~36개월,NULL,NULL,NULL,NULL,32
+100만원 이상,NULL,NULL,NULL,NULL,1인 1계좌,33
+"100만원 이상, 합산금액 5억원 이내",NULL,NULL,NULL,NULL,1인 다계좌 가능,34
+"최저 10만원 이상, 합산금액 최대 10억원 이내",NULL,NULL,NULL,NULL,1인 다계좌 가능,35
+100만원 이상,NULL,NULL,NULL,NULL,1인 1계좌,36
+100만원 이상(원단위),"1개월 이상 ~ 36개월 이하(월, 일단위 지정 가능)",NULL,스마트폰,NULL,NULL,37
+최소 1백만원 최대 10억원,"3개월, 6개월",NULL,NULL,NULL,NULL,38
+1백만원 이상,NULL,NULL,NULL,NULL,NULL,39
+1백만원 이상,36개월(가입후 매1년 회전주기 단위로 약정이율 변동),NULL,NULL,"완료된 회전주기기간은 중도해지시에도 기간별 약정금리제공, 미완료된 회전주기기간은 당행 중도해지이자율 적용",약정이율 : 회전시점 정기예금 12개월금리+0.1%,40
+1백만원 이상,NULL,NULL,모바일,NULL,1인1계좌,41
+1백만원 이상,36개월(가입후 매1년 회전주기 단위로 약정이율 변동),NULL,NULL,"완료된 회전주기기간은 중도해지시에도 기간별 약정금리제공, 미완료된 회전주기기간은 당행 중도해지이자율 적용",약정이율 : 회전시점 정기예금 12개월금리+0.1%,42
+1백만원 이상,12개월(가입후 매3개월 단위로 구간별 약정이율 변동),NULL,NULL,경과한 구간은 구간별 약정금리 + 잔여경과일수의 보통예금금리 제공(3개월미만은 보통예금금리 이자율 적용),NULL,43
+1백만원 이상,12개월(가입후 매3개월 단위로 구간별 약정이율 변동),NULL,NULL,경과한 구간은 구간별 약정금리 + 잔여경과일수의 보통예금금리 제공(3개월미만은 보통예금금리 이자율 적용),NULL,44
+1십만원 이상 1천만원 이하,NULL,NULL,모바일,NULL,1인1상품,45
+1십만원 이상 3천만원 이하,7개월 ~24개월,NULL,모바일,NULL,1인1계좌,46
+10만원 이상,NULL,시장금리에 변동없는 최초 약정금리로 이자 수령,NULL,NULL,NULL,47
+10만원 이상,NULL,시장금리에 변동없는 최초 약정금리로 이자 수령,NULL,NULL,NULL,48
+100만원 이상,NULL,NULL,NULL,NULL,"가입시점과 회전기간 도래시점에 따라 이자율이 적용되며, 회전도래일이 휴일인 경우 휴일 전영업일의 금리 적용",49
+100만원 이상,NULL,NULL,NULL,NULL,"가입시점과 회전기간 도래시점에 따라 이자율이 적용되며, 회전도래일이 휴일인 경우 휴일 전영업일의 금리 적용",50
+10만원 이상,NULL,NULL,대면(창구),NULL,NULL,51
+10만원 이상,NULL,NULL,인터넷뱅킹,NULL,NULL,52
+10만원 이상,NULL,NULL,대면(창구),NULL,NULL,53
+10만원 이상,NULL,NULL,인터넷뱅킹,NULL,NULL,54
+10만원 이상,NULL,NULL,"스마트뱅킹, SB톡톡+",NULL,NULL,55
+10만원 이상,NULL,NULL,"스마트뱅킹, SB톡톡+",NULL,NULL,56
+10만원 이상,NULL,NULL,대면(창구),NULL,NULL,57
+10만원 이상,NULL,NULL,"스마트뱅킹, SB톡톡+",NULL,NULL,58
+10만원 이상,NULL,NULL,NULL,NULL,NULL,59
+10만원 이상,NULL,NULL,NULL,NULL,NULL,60
+10만원 이상,NULL,NULL,NULL,NULL,NULL,61
+10만원 이상,36개월 (회전주기 12개월),NULL,NULL,NULL,회전주기(매 1년)마다 약정이율 변동,62
+10만원 이상,36개월 (회전주기 12개월),NULL,NULL,NULL,회전주기(매 1년)마다 약정이율 변동,63
+10만원 이상,36개월,NULL,NULL,NULL,회전주기(6개월)마다 약정이율 변동,64
+10만원 이상,36개월,NULL,NULL,NULL,회전주기(6개월)마다 약정이율 변동,65
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,66
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,67
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,가입가능시간(09:00~16:00),68
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,69
+NULL,NULL,NULL,NULL,"1개월 미만 : 0.20%, 3개월 미만 : 1.45%, 6개월 미만 : 1.95%, 12개월 미만 : 1.96%, 12개월 이상 : 연단위 기간별 가입시점 고시금리 적용, 연단위 기간 초과분 : 초과기간에 해당하는 가입시점의 중도해지금리 적용, 우수고객 중도해지금리 : 실예치기간 기본금리 적용",NULL,70
+NULL,NULL,NULL,영업점,NULL,NULL,71
+NULL,NULL,NULL,NULL,NULL,인터넷가입 전용상품,72
+NULL,NULL,NULL,NULL,NULL,스마트폰 가입 전용상품,73
+NULL,36개월 (회전주기 12개월),NULL,NULL,NULL,스마트폰가입 전용상품,74
+NULL,36개월 (회전주기 6개월),NULL,영업점,NULL,NULL,75
+NULL,36개월(회전주기 매1년),NULL,NULL,NULL,NULL,76
+NULL,36개월(회전주기 매1년),NULL,NULL,NULL,NULL,77
+NULL,NULL,NULL,NULL,NULL,NULL,78
+NULL,NULL,NULL,"인터넷뱅킹, 스마트폰뱅킹",NULL,NULL,79
+NULL,NULL,NULL,NULL,NULL,변동금리,80
+NULL,NULL,NULL,NULL,NULL,변동금리,81
+NULL,NULL,NULL,NULL,NULL,NULL,82
+NULL,NULL,NULL,NULL,NULL,NULL,83
+NULL,NULL,NULL,"인터넷, 스마트폰",NULL,NULL,84
+NULL,NULL,NULL,NULL,NULL,NULL,85
+NULL,NULL,NULL,NULL,NULL,1년 마다 고시이율이 적용되는 변동금리 상품,86
+10만원 이상,12개월 초과,NULL,NULL,NULL,NULL,87
+10만원 이상,12개월 초과,NULL,NULL,NULL,NULL,88
+10만원 이상,12개월 초과,NULL,NULL,NULL,NULL,89
+NULL,NULL,NULL,NULL,"1개월미만 : 가입일의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%, 12개월이상 : 약정이율X70%",NULL,90
+NULL,NULL,NULL,NULL,"1개월미만 : 가입일의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%, 12개월이상 : 약정이율X70%",NULL,91
+NULL,36개월(가입 후 매1년 회전주기 단위로 약정이율 변동),NULL,NULL,"1개월미만 : 신규일(또는 최종회전일)의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%","변동금리 상품, 약정이율 : 회전시점의 Fi정기예금(비대면) 12개월 금리+0.05%",92
+NULL,36개월(가입 후 매1년 회전주기 단위로 약정이율 변동),NULL,NULL,"1개월미만 : 신규일(또는 최종회전일)의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%",약정이율 : 회전시점의 Fi정기예금(비대면) 12개월 금리+0.05%,93
+NULL,36개월(가입후 매 3개월 단위로 약정이율 변동),NULL,NULL,중도해지 시점 해당계좌의 약정금리와 동일,NULL,94
+NULL,36개월(가입후 매 3개월 단위로 약정이율 변동),NULL,NULL,중도해지 시점 해당계좌의 약정금리와 동일,NULL,95
+NULL,12개월,NULL,NULL,기본금리,만기시에는 추가금리가 더해지는 정기예금,96
+NULL,12개월,NULL,NULL,기본금리,만기시에는 추가금리가 더해지는 정기예금,97
+NULL,36개월,NULL,NULL,"1개월미만 - 신규일의 보통예금 금리, 6개월미만 : 약정이율X50%","변동금리 상품, 가입 후 매 6개월 회전주기 단위로 약정이율 변동",98
+NULL,36개월,NULL,NULL,"1개월미만 - 신규일의 보통예금 금리, 6개월미만 : 약정이율X50%","변동금리 상품, 가입 후 매 6개월 회전주기 단위로 약정이율 변동",99
+NULL,NULL,NULL,NULL,NULL,NULL,100
+NULL,NULL,NULL,NULL,NULL,NULL,101
+NULL,NULL,NULL,NULL,NULL,NULL,102
+NULL,NULL,NULL,NULL,NULL,NULL,103
+NULL,NULL,NULL,NULL,NULL,NULL,104
+NULL,NULL,NULL,NULL,NULL,NULL,105
+NULL,NULL,NULL,NULL,NULL,NULL,106
+NULL,NULL,NULL,NULL,NULL,NULL,107
+NULL,NULL,NULL,NULL,NULL,NULL,108
+NULL,NULL,NULL,NULL,NULL,NULL,109
+NULL,NULL,NULL,NULL,"만기후 1개월까지는 계약당시 금리와 만기시점 해당금리를 비교하여 낮은 금리 적용, 만기후 1개월 초과 이후로는 보통예금 금리 적용",NULL,110
+NULL,NULL,NULL,NULL,"만기후 1개월까지는 계약당시 금리와 만기시점 해당금리를 비교하여 낮은 금리 적용, 만기후 1개월 초과 이후로는 보통예금 금리 적용",NULL,111
+NULL,NULL,NULL,NULL,NULL,NULL,112
+NULL,NULL,NULL,NULL,NULL,NULL,113
+NULL,NULL,NULL,NULL,NULL,NULL,114
+NULL,NULL,NULL,NULL,NULL,NULL,115
+NULL,NULL,NULL,NULL,NULL,NULL,116
+NULL,NULL,NULL,온라인,NULL,통장을 발급하지 않는 온라인 전용상품으로 영업점 해지시 우대금리 적용불가,117
+NULL,1년 단위,NULL,NULL,금번 금리변경일 이후 1년 경과 전 중도해지 시 위 기간별 중도해지이율이 적용,상품최초 가입일자부터 1년이 경과하여 해지하는 경우에는 금번 금리변경＊전 일자까지는 약정이율이 적용,118
+NULL,1년 단위,NULL,NULL,"금번 금리변경＊전 일자까지는 약정이율이 적용되고, 금번 금리변경일 이후 1년 경과 전 중도해지 시 위 기간별 중도해지이율이 적용됩니다.","상품최초 가입일자부터 1년이 경과하여 해지하는 경우에는 약정이율이 적용되고, 금번 금리변경일 이후 1년 경과 전 중도해지 시 위 기간별 중도해지이율이 적용됩니다.",119
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~36개월미만 : 약정이율X70%",NULL,120
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~36개월미만 : 약정이율X70%",NULL,121
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~36개월미만 : 약정이율X70%",NULL,122
+월 50만원 이내,1년/2년/3년,NULL,NULL,NULL,NULL,123
+월 50만원 이내,1년,NULL,NULL,NULL,NULL,124
+NULL,NULL,NULL,NULL,NULL,NULL,125
+월 100만원(최저 10만원 이상),NULL,NULL,NULL,NULL,1계좌당 가입,126
+월 50만원(최저 1만원 이상),NULL,NULL,NULL,NULL,NULL,127
+월20만원(최저 1만원 이상),NULL,NULL,NULL,NULL,NULL,128
+월 100만원(최저 5만원 이상),NULL,NULL,NULL,NULL,1계좌당 가입,129
+월 1만원 이상 50만원 이하 원단위,NULL,NULL,NULL,NULL,정기적립식,130
+월 1만원 이상 1천만원 이하 원단위,NULL,NULL,NULL,NULL,자유적립식,131
+1천원 이상,6개월 이상 60개월 이하(일단위),NULL,NULL,NULL,NULL,132
+월 1천원 이상 100만원 이하 원단위,NULL,NULL,NULL,NULL,자유적립식,133
+월 1만원 이상 30만원 이하 원단위,NULL,NULL,NULL,NULL,자유적립식,134
+월5만원 이상 5백만원 이하 (1인1계좌),6개월 이상 3년제,NULL,NULL,NULL,NULL,135
+월 5만원 이상 1백만원 이하 (1인1계좌),"12개월제, 18개월제",NULL,NULL,NULL,"18개월 정액식 기본금리 3.3%, 최고금리 5.2%",136
+월10만원 이상 5백만원 이하 (1인1계좌),1년제,NULL,NULL,NULL,NULL,137
+월 납입한도 50만원 이하,NULL,NULL,NULL,NULL,NULL,138
+NULL,NULL,NULL,NULL,NULL,월 납입한도 30만원 이하,139
+월 납입한도 100만원 이하,NULL,NULL,NULL,NULL,NULL,140
+"초회불입금 1만원이상, 1인당 월별 최고 1천만원이내",NULL,NULL,인터넷뱅킹/스마트폰뱅킹,NULL,만기직전 1개월간 적립합계는 이전기간 적립금액을 초과할 수 없음,141
+"초회불입금 1만원이상, 1인당 월별 최고 5백만원이내",NULL,NULL,인터넷뱅킹/스마트폰뱅킹,NULL,NULL,142
+월별 5만원 이상 최고 50만원 이하,6개월,NULL,NULL,NULL,1인 1계좌,143
+"5만원 이상, 최고금액은 제한없음",1년 이상 3년 이하 월단위,NULL,NULL,NULL,NULL,144
+초입금 1만원 이상 월별 500만원 이내,6개월 이상 2년 이내 월단위,NULL,NULL,NULL,최대 저축횟수는 999회 이내,145
+"최소 1만원 이상, 최고 월 100만원 이하 (천원 단위)",1개월 이상 36개월 이하 월단위,NULL,NULL,NULL,1인 1계좌로 가입가능,146
+"매월 1만원 이상, 최고금액은 제한없음","1년제, 2년제, 3년제",NULL,NULL,NULL,NULL,147
+1천원 이상 10만원 이하,1개월 이상 6개월 이내 월단위,NULL,NULL,NULL,최대 저축횟수는 999회 이내,148
+1천원 이상 3만원 이하,1개월,NULL,NULL,NULL,최대 저축횟수는 999회 이내,149
+계좌당 20만원 이내,NULL,NULL,NULL,NULL,1인당 3계좌 가입 가능,150
+1만원 이상 1백만원까지,NULL,NULL,NULL,NULL,1인당 1계좌 가입 가능,151
+"1인당 1계좌 가입 가능하며, 계좌당 100만원까지 납입 가능",NULL,NULL,NULL,NULL,NULL,152
+NULL,NULL,NULL,NULL,NULL,NULL,153
+NULL,NULL,NULL,NULL,NULL,NULL,154
+NULL,NULL,NULL,NULL,NULL,1인 1계좌,155
+NULL,NULL,NULL,NULL,NULL,공동명의 불가 (1인 최대 3계좌),156
+NULL,NULL,NULL,NULL,NULL,공동명의 불가 (1인 최대 3계좌),157
+NULL,NULL,NULL,NULL,NULL,"개인사업자, 임의단체 및 공동명의 가입 불가 (1인 최대 3계좌)",158
+NULL,NULL,NULL,KB스타뱅킹,NULL,"개인사업자, 임의단체 및 공동명의 가입 불가 (1인 1계좌)",159
+월300만원 이하,NULL,NULL,NULL,NULL,1인 다계좌,160
+1천원 이상 5만원 이내(천원 단위),1개월 이상 6개월 이하(일 단위),NULL,NULL,NULL,NULL,161
+"초입금 및 매회 1만원 이상, 월 50만원 이내 자유적립","가입기간 12개월 이하 : 3개월 이상 급여이체, 가입기간 24개월 이하 : 12개월 이상 급여이체",NULL,NULL,NULL,급여이체 실적과 개인사업자 계좌 실적 우대금리는 중복 적용 불가,162
+"초입금 5만원 이상 및 매회 1만원 이상, 매월 50만원 이내",NULL,NULL,NULL,NULL,만기일 전 3개월 이내에는 이전 적립금 합계액을 초과하여 입금불가,163
+"초입금 1만원 이상 및 매회 1천원 이상, 매월 50만원 이내",NULL,NULL,농협은행/농축협 영업점 또는 고향사랑e음 홈페이지,NULL,"고향사랑기부금 우대금리 제공, 연간 판매액의 0.1% 공익기금 적립",164
+초입금 및 매회 입금 1만원 이상 원 단위,NULL,NULL,NULL,NULL,"1인당 분기별 3백만원 이내 적립 가능, 계약기간 3/4 경과 후 적립할 수 있는 금액은 이전 적립누계액의 1/2이내",165
+최저1만원~300만원이하,NULL,NULL,NULL,NULL,"1인 1계좌만 가능, 급여하나월복리적금,연금하나 월복리적금과 중복가입 불가, 분기당 1만원이상 300만원(자유적립식)",166
+"1천원 이상~1,000만원 이하(원단위)",NULL,NULL,NULL,NULL,"1인 다계좌 가능, 자유적립식/정액적립식",167
+1만원 이상 30만원 이하,"6개월, 1년, 2년, 3년",NULL,NULL,NULL,1인 최대 15계좌,168
+0원,31일,NULL,NULL,NULL,"1인 최대 1계좌, 연결계좌를 통한 직접 입금만 가능, 입금은 신규일부터 만기일 전일까지 1일 1회 가능, 납입금액 : 1일(1회) 최소 100원, 최대 5만원",169
+1천원 이상 300만원 이하,6개월 ~ 36개월,NULL,NULL,NULL,1인 최대 3계좌,170
+100만원,NULL,NULL,NULL,NULL,1인 1계좌,171
+100만원,NULL,NULL,NULL,NULL,1인 1계좌,172
+20만원,NULL,NULL,NULL,NULL,1인 1계좌,173
+1천원 이상(원단위),"6개월 이상 ~ 36개월 이하(월, 일단위 지정 가능)",NULL,스마트폰,NULL,"월 적립한도 : 1천원 이상 월 300만원 이하 원단위(단, 자동연장된 원리금은 월 적립한도에 포함되지 않음)",174
+"1천원, 2천원, 3천원, 5천원, 1만원",6개월,NULL,스마트폰,NULL,"26주적금서비스(자동이체)를 통해서 납입이 가능하며, 그 외의 입금은 모두 제한됨. 단, 26주적금 서비스를 통한 납입 실패 시 빈자리 채우기로 납입 가능",175
+1회 100원 이상 3만원 이하(원단위),31일,NULL,스마트폰,NULL,"직접 납입을 통해서 1일 1회만 입금 가능하며, 그 외의 입금은 모두 제한됨",176
+0원,NULL,NULL,NULL,NULL,"1인 1계좌 (단, 이벤트 등으로 토스뱅크가 복수의 계좌개설을 허용하는 경우 추가 개설 가능), 우대금리는 우대조건을 달성하고 만기 해지하는 경우에만 제공됨",177
+0원,NULL,NULL,NULL,NULL,"1인 1계좌 (단, 이벤트 등으로 토스뱅크가 복수의 계좌개설을 허용하는 경우 추가 개설 가능), 우대금리는 만기 해지하는 경우에만 제공됨",178
+0원 이상 300만원 이하,NULL,NULL,NULL,NULL,"1인 1계좌, 우대금리는 만기 해지하는 경우에만 제공됨",179
+0원,NULL,NULL,NULL,NULL,"1인 1계좌, 우대금리는 만기 해지하는 경우에만 제공됨",180
+1만원 이상,NULL,NULL,NULL,NULL,NULL,181
+1만원 이상,NULL,NULL,NULL,NULL,1인 1계좌,182
+1천원~20만원,NULL,NULL,오픈뱅킹,NULL,1인1계좌,183
+월 불입금 1만원 이상,6개월 이상 ~ 60개월 까지 (월 단위 가능),만기시 이자지급,NULL,NULL,NULL,184
+월 불입금 1만원 이상,12개월 이상 ~ 36개월 까지 (월 단위 가능),만기시 이자지급,NULL,NULL,"월중 입금액은 계약금액의 10%를 초과할 수 없으며, 만기일로부터 1개월 이내는 납입불가",185
+"1,000원 이상",NULL,NULL,NULL,NULL,한도: 분기당 50만원(연 2백만원),186
+1만원 이상,NULL,NULL,대면(창구),NULL,NULL,187
+1만원 이상,NULL,NULL,인터넷뱅킹,NULL,NULL,188
+1만원 이상,NULL,NULL,"스마트뱅킹, SB톡톡+",NULL,NULL,189
+1만원 이상 30만원이하까지,NULL,NULL,"스마트뱅킹, SB톡톡+",NULL,NULL,190
+1만원 이상,NULL,NULL,NULL,NULL,NULL,191
+1만원 이상,NULL,NULL,NULL,NULL,NULL,192
+1만원 이상,NULL,NULL,NULL,NULL,NULL,193
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,194
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,195
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,196
+NULL,NULL,NULL,NULL,중도해지 시 가입 기간에 따라 중도해지이율이 다르게 적용됩니다.,NULL,197
+NULL,NULL,NULL,NULL,"1개월 미만 : 0.20%, 6개월 미만 : 1.65%, 12개월 미만 : 2.02%, 12개월 이상 : 2.05%",NULL,198
+최고한도 : 5억원,NULL,NULL,NULL,"1개월 미만 : 0.20%, 3개월 미만 : 1.40%, 6개월 미만 : 1.90%, 12개월 미만 : 1.91%, 12개월 이상 : 1.95%",1인 1계좌만 가능,199
+NULL,NULL,NULL,영업점,NULL,NULL,200
+NULL,NULL,NULL,NULL,NULL,인터넷가입 전용상품,201
+NULL,NULL,NULL,NULL,NULL,스마트폰 가입 전용상품,202
+NULL,NULL,NULL,NULL,NULL,NULL,203
+NULL,NULL,NULL,NULL,NULL,NULL,204
+NULL,NULL,NULL,NULL,NULL,NULL,205
+NULL,NULL,NULL,"인터넷뱅킹, 스마트폰뱅킹",NULL,NULL,206
+NULL,NULL,NULL,NULL,NULL,NULL,207
+NULL,NULL,NULL,NULL,NULL,NULL,208
+NULL,NULL,NULL,NULL,NULL,NULL,209
+NULL,NULL,NULL,NULL,NULL,NULL,210
+"10,000원 이상",NULL,NULL,NULL,NULL,NULL,211
+"10,000원 이상",NULL,NULL,NULL,NULL,NULL,212
+NULL,NULL,NULL,NULL,"1개월미만 : 가입일의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%, 12개월이상 : 약정이율X70%",NULL,213
+NULL,NULL,NULL,NULL,"1개월미만 : 가입일의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%, 12개월이상 : 약정이율X70%",NULL,214
+NULL,NULL,NULL,NULL,"1개월미만 : 가입일의 보통예금 금리, 6개월미만 : 약정이율X50%, 9개월미만 : 약정이율X55%, 12개월미만 : 약정이율X60%, 12개월이상 : 약정이율X70%",NULL,215
+NULL,NULL,NULL,NULL,NULL,NULL,216
+NULL,NULL,NULL,NULL,NULL,NULL,217
+1인당 최대 100만원까지 가입가능,6개월~36개월,NULL,NULL,NULL,1인1계좌 제한,218
+1인당 최대 150만원까지 가입가능,6개월~12개월,NULL,고뱅크 어플,NULL,NULL,219
+NULL,NULL,NULL,NULL,"만기후 1개월까지는 계약당시 금리와 만기시점 해당금리를 비교하여 낮은 금리 적용, 만기후 1개월 초과 이후로는 보통예금 금리 적용",NULL,220
+NULL,NULL,NULL,NULL,"만기후 1개월까지는 계약당시 금리와 만기시점 해당금리를 비교하여 낮은 금리 적용, 만기후 1개월 초과 이후로는 보통예금 금리 적용",NULL,221
+NULL,NULL,NULL,NULL,NULL,NULL,222
+NULL,NULL,NULL,NULL,NULL,NULL,223
+NULL,NULL,NULL,NULL,NULL,NULL,224
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~60개월미만 : 약정이율X70%",NULL,225
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~60개월미만 : 약정이율X70%",NULL,226
+1인당 최고 월 100만원 불입 가능,NULL,NULL,인터넷 및 모바일뱅킹,일반 정기적금과 동일,NULL,227
+NULL,NULL,NULL,NULL,"① 1개월 미만 : 보통예금이율 (0.2%), ② 1개월이상~6개월미만 : 약정이율X50%, ③ 6개월이상~12개월미만 : 약정이율X55%, ④ 12개월이상~24개월미만 : 약정이율X60%, ⑤ 24개월이상~60개월미만 : 약정이율X70%",NULL,228
+월 1만원 이상,NULL,NULL,NULL,NULL,NULL,229
+월 30만원 이상,NULL,NULL,NULL,NULL,NULL,230
+월 30만원 이상,NULL,NULL,NULL,NULL,NULL,231
+월 1만원 이상,NULL,NULL,NULL,NULL,NULL,232
+NULL,NULL,NULL,NULL,NULL,NULL,233
+NULL,NULL,NULL,NULL,NULL,NULL,234
+NULL,NULL,NULL,NULL,NULL,NULL,235
+NULL,NULL,NULL,NULL,"1개월미만 : 계약일의 보통예금 금리, 1개월이상 6개월미만 : 약정이율의 50%, 6개월이상 12개월미만 : 약정이율의 55%, 12개월 이상 : 약정이율의 65%",NULL,236
+NULL,NULL,NULL,NULL,"1개월미만 : 계약일의 보통예금 금리, 1개월이상 6개월미만 : 약정이율의 50%, 6개월이상 12개월미만 : 약정이율의 55%, 12개월 이상 : 약정이율의 65%",NULL,237
+NULL,NULL,NULL,NULL,"1개월미만 : 계약일의 보통예금 금리, 1개월이상 6개월미만 : 약정이율의 50%, 6개월이상 12개월미만 : 약정이율의 55%, 12개월 이상 : 약정이율의 65%",NULL,238
+1인당 최고 5천만원,NULL,NULL,NULL,NULL,NULL,239
