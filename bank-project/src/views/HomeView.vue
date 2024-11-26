@@ -9,7 +9,7 @@
             주욱주욱과 함께 스마트한 금융생활을 시작하세요.<br />
             실시간 환율부터 맞춤형 금융상품까지 한번에 확인하세요.
           </p>
-          <button class="btn btn-primary btn-lg" @click="handleGetStarted">시작하기</button>
+          <button class="btn btn-primary btn-lg" @click="handleGetStarted">상품 추천 받기</button>
         </div>
         <div class="hero-image d-none d-lg-block">
           <!-- 이미지 플레이스홀더 -->
@@ -61,8 +61,8 @@
             </div>
             </RouterLink>
           </div>
-          <div v-else-if="service.title === '맞춤 추천'">
-            <RouterLink :to="{name:'product-recommendation'}">
+          <div v-else-if="service.title === '상품 정보'">
+            <RouterLink :to="{name:'products'}">
               <div class="service-content">
               <div class="service-icon">
                 <i :class="service.icon"></i>
@@ -109,14 +109,14 @@ const services = ref([
   {
     id: 4,
     icon: "fas fa-chart-line",
-    title: "맞춤 추천",
+    title: "상품 정보",
     description: "나에게 맞는 최적의 금융상품을 추천받으세요.",
   },
 ]);
 
 // 시작하기 버튼 클릭 시 환율 페이지로 이동
 const handleGetStarted = () => {
-  router.push("/exchange");
+  router.push("/product-recommendation");
 };
 
 // 서비스 카드 클릭 시 해당 서비스 페이지로 이동

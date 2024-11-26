@@ -119,9 +119,9 @@
               <h3>{{ index+1 }}. {{zzim.kor_co_nm}} - {{ zzim.fin_prdt_nm }}</h3>
             </router-link>
             <div class="chart">
-          <Bar :data="chartData" :options="chartOptions" />
-         </div>
+            </div>
           </div>
+          <Bar :data="chartData" :options="chartOptions" />
         </div>
         <div v-else class="articles-list">
           <h4>선택한 상품이 없습니다.</h4>
