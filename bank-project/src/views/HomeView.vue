@@ -32,7 +32,11 @@
             <RouterLink :to="{name:'exchange'}">
               <div class="service-content">
               <div class="service-icon">
-                <i :class="service.icon"></i>
+                <img v-if="service.isImage" 
+                     :src="service.icon" 
+                     alt="환율 계산" 
+                     class="service-image">
+                <i v-else :class="service.icon"></i>
               </div>
               <h3>{{ service.title }}</h3>
               <p>{{ service.description }}</p>
@@ -42,34 +46,46 @@
           <div v-else-if="service.title === '주변 은행찾기'">
             <RouterLink :to="{name:'nearby-banks'}">
               <div class="service-content">
-              <div class="service-icon">
-                <i :class="service.icon"></i>
+                <div class="service-icon">
+                  <img v-if="service.isImage" 
+                       :src="service.icon" 
+                       alt="주변 은행찾기" 
+                       class="service-image">
+                  <i v-else :class="service.icon"></i>
+                </div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
               </div>
-              <h3>{{ service.title }}</h3>
-              <p>{{ service.description }}</p>
-            </div>
             </RouterLink>
           </div>
           <div v-else-if="service.title === '커뮤니티'">
             <RouterLink :to="{name:'articles'}">
               <div class="service-content">
-              <div class="service-icon">
-                <i :class="service.icon"></i>
+                <div class="service-icon">
+                  <img v-if="service.isImage" 
+                       :src="service.icon" 
+                       alt="커뮤니티" 
+                       class="service-image">
+                  <i v-else :class="service.icon"></i>
+                </div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
               </div>
-              <h3>{{ service.title }}</h3>
-              <p>{{ service.description }}</p>
-            </div>
             </RouterLink>
           </div>
           <div v-else-if="service.title === '상품 정보'">
             <RouterLink :to="{name:'products'}">
               <div class="service-content">
-              <div class="service-icon">
-                <i :class="service.icon"></i>
+                <div class="service-icon">
+                  <img v-if="service.isImage" 
+                       :src="service.icon" 
+                       alt="상품 정보" 
+                       class="service-image">
+                  <i v-else :class="service.icon"></i>
+                </div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
               </div>
-              <h3>{{ service.title }}</h3>
-              <p>{{ service.description }}</p>
-            </div>
             </RouterLink>
           </div>
           </div>
@@ -83,6 +99,10 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { RouterLink } from "vue-router";
+import productsImage from '@/assets/products2.png';
+import communityImage from '@/assets/community.png';
+import mapImage from '@/assets/map.png';
+import exchangeImage from '@/assets/exchange.png';  // exchange 이미지 import 추가
 
 const router = useRouter();
 
@@ -90,27 +110,31 @@ const router = useRouter();
 const services = ref([
   {
     id: 1,
-    icon: "fas fa-calculator",
+    icon: exchangeImage,  // 이미지로 변경
     title: "환율 계산",
     description: "실시간 환율 정보와 함께 정확한 환전 금액을 계산해보세요.",
+    isImage: true,  // 이미지 플래그 추가
   },
   {
     id: 2,
-    icon: "fas fa-map-marker-alt",
+    icon: mapImage,
     title: "주변 은행찾기",
     description: "가까운 은행과 ATM 위치를 쉽게 찾아보세요.",
+    isImage: true,
   },
   {
     id: 3,
-    icon: "fas fa-comments",
+    icon: communityImage,
     title: "커뮤니티",
     description: "다양한 금융 정보와 경험을 공유하세요.",
+    isImage: true,
   },
   {
     id: 4,
-    icon: "fas fa-chart-line",
+    icon: productsImage,
     title: "상품 정보",
     description: "나에게 맞는 최적의 금융상품을 추천받으세요.",
+    isImage: true,
   },
 ]);
 
@@ -219,6 +243,13 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.service-image {
+  width: 65%;  /* 이미지 크기 조정 */
+  height: 65%;
+  object-fit: contain;  /* 이미지가 온전히 보이도록 설정 */
 }
 
 .service-icon i {

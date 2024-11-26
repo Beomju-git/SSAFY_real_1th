@@ -2,7 +2,10 @@
     <nav class="navigation-bar">
         <div class="nav-container">
             <div class="logo">
-                <router-link to="/">JuukJuuk</router-link>
+                <router-link to="/" class="logo-link">
+                    <img :src="mainLogo" alt="FinPoint Logo" class="logo-image">
+                    <span class="logo-text">FinPoint</span>
+                </router-link>
             </div>
             <button class="hamburger" @click="toggleMenu">
                 <span class="bar"></span>
@@ -62,6 +65,7 @@ import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import LoginModal from './LoginModal.vue'
 import SignupModal from './SignupModal.vue'
+import mainLogo from '@/assets/main.png'
 
 const authStore = useAuthStore()
 const isLoginModalVisible = ref(false)
@@ -285,5 +289,36 @@ const toggleMenu = () => {
 
 .logout-button:hover {
     background-color: #e9ecef;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #2D60FF;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.logo-image {
+    height: 24px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text {
+    color: #2D60FF;
+}
+
+/* 모바일 반응형 스타일 추가 */
+@media (max-width: 768px) {
+    .logo-image {
+        height: 20px;
+    }
+    
+    .logo-text {
+        font-size: 1.1rem;
+    }
 }
 </style>

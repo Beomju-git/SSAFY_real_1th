@@ -102,7 +102,7 @@ export default {
     const newComment = ref('')
     const loading = ref(false)
     const error = ref(null)
-    const baseUrl = articlesAPI.base_URL
+    const baseUrl = 'http://localhost:8000'
     const editedCommentContent = ref('')
     const isUpdated = ref(true)
     const editingCommentId = ref(null)

@@ -33,7 +33,7 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
         class Meta:
             model = User
             fields =('username', 'id',)
-    author =    UserInfoSerialzier()
+    author =    UserInfoSerialzier(read_only=True)
     
     # 단일 게시글 조회 시 좋아요, 싫어요 개수 출력
     liked_count = serializers.IntegerField(source='liked_users.count', read_only=True)

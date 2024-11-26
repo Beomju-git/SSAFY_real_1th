@@ -13,6 +13,7 @@ from groq import RateLimitError
 from rest_framework.decorators import api_view
 import requests
 from bs4 import BeautifulSoup
+from .services import ProductAnalyzer
 
 def process_data_with_groq(data_row, max_retries=3, delay=4):
     for attempt in range(max_retries):
@@ -195,47 +196,72 @@ def run_standardization_view(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-def get_product_recommendation(user_input, max_retries=3, delay=4):
-    for attempt in range(max_retries):
-        try:
-            client = Groq()
-            messages = [
-                {
-                    "role": "system",
-                    "content": """금융 상품 추천 전문가입니다. 다음 규칙을 따르세요:
-1. 사용자의 상황을 분석하여 적절한 금융 상품을 추천합니다
-2. 추천 시 DB의 실제 상품 정보를 참고합니다
-3. 응답은 JSON 형식으로 제공합니다
-4. 이유와 함께 구체적인 설명을 제공합니다"""
-                },
-                {
-                    "role": "user",
-                    "content": f"다음 사용자에게 적합한 금융 상품을 추천해주세요:\n{user_input}"
-                }
-            ]
+def get_product_recommendation(self, user_message, intent_data):
+    try:
+        products = TermDeposit.objects.all()
+        product_list = [f"{d.fin_prdt_nm}({d.kor_co_nm})" for d in products]
+        
+        messages = [
+            {
+                "role": "system",
+                "content": """당신은 금융 상품 추천 전문가입니다. 
+주의사항:
+1. 반드시 제공된 상품 목록에서만 선택하세요
+2. 목록에 없는 상품은 절대 추천하지 마세요
+3. 다음 형식으로 정확히 답변하세요:
+{
+    "product": "상품명(은행명)",
+    "reason": "추천 이유",
+    "details": "상품 특징 설명",
+    "market_analysis": "현재 시장에서의 위치"
+}"""
+            },
+            {
+                "role": "user",
+                "content": f"""
+사용자 요구사항: {user_message}
+의도: {intent_data['type']}
+키워드: {intent_data['keyword']}
 
-            completion = client.chat.completions.create(
-                model="llama-3.1-70b-versatile",
-                messages=messages,
-                temperature=0.7,
-                max_tokens=1000,
-                top_p=1,
-                stream=False,
-                stop=None
-            )
+선택 가능한 상품 목록:
+{', '.join(product_list)}
 
-            response = completion.choices[0].message.content.strip()
-            return response
+위 목록에 있는 상품 중에서만 선택하여 추천해주세요."""
+            }
+        ]
 
-        except Exception as e:
-            print(f"추천 처리 중 오류: {str(e)}")
-            if attempt < max_retries - 1:
-                time.sleep(delay)
-                delay *= 2
-                continue
-            return None
+        completion = self.client.chat.completions.create(
+            model="llama-3.1-70b-versatile",
+            messages=messages,
+            temperature=0.1,  # 온도를 낮춰서 더 보수적인 응답 유도
+            max_tokens=1000,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
 
-    return None
+        response = completion.choices[0].message.content.strip()
+        recommendation = json.loads(response)
+        
+        # 추천 결과 검증
+        if not validate_recommendation(recommendation, product_list):
+            return {
+                "product": "추천 실패",
+                "reason": "죄송합니다. 요청하신 조건에 맞는 상품을 찾을 수 없습니다.",
+                "details": "다른 조건으로 다시 시도해주세요.",
+                "market_analysis": "현재 이용할 수 없습니다."
+            }
+            
+        return recommendation
+
+    except Exception as e:
+        print(f"Recommendation error: {str(e)}")
+        return {
+            "product": "추천 실패",
+            "reason": "죄송합니다. 추천을 생성하는 중 오류가 발생했습니다.",
+            "details": "잠시 후 다시 시도해주세요.",
+            "market_analysis": "현재 이용할 수 없습니다."
+        }
 
 @api_view(['POST'])
 def recommend_products(request):
@@ -293,155 +319,59 @@ def search_duckduckgo(query):
 def chat_recommend(request):
     try:
         user_message = request.data.get('message')
+        session_id = request.data.get('session_id', 'default')
+        
         if not user_message:
             return JsonResponse({'error': '메시지가 필요합니다'}, status=400)
 
-        # Get available products
-        term_deposits = TermDeposit.objects.all()
-        product_list = [f"{d.fin_prdt_nm}({d.kor_co_nm})" for d in term_deposits]
-
-        max_retries = 3
-        base_delay = 4  # 초기 대기 시간 (초)
-
-        # 첫 번째 API 호출 (상품 추천)
-        for attempt in range(max_retries):
-            try:
-                client = Groq()
-                initial_messages = [
-                    {
-                        "role": "system",
-                        "content": """당신은 금융 상품 추천 전문가입니다. 주어진 상품 목록에서만 선택하여 추천해주세요."""
-                    },
-                    {
-                        "role": "user",
-                        "content": f"""
-사용자 입력: {user_message}
-
-선택 가능한 상품 목록:
-{', '.join(product_list)}
-
-위 목록에서 가장 적합한 상품 하나만 추천해주세요. 상품명(은행명) 형식으로만 답변하세요."""
-                    }
-                ]
-
-                initial_completion = client.chat.completions.create(
-                    model="llama-3.2-90b-text-preview",
-                    messages=initial_messages,
-                    temperature=0.1,
-                    max_tokens=100,
-                    top_p=1,
-                    stream=False,
-                    stop=None
-                )
-                recommended_product = initial_completion.choices[0].message.content.strip()
-                break
-
-            except RateLimitError as e:
-                if attempt < max_retries - 1:
-                    wait_time = base_delay * (2 ** attempt)  # 지수 백오프
-                    print(f"Rate limit reached. Waiting {wait_time} seconds...")
-                    time.sleep(wait_time)
-                    continue
-                return JsonResponse({
-                    'error': '서비스가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.',
-                    'status': 'error'
-                }, status=429)
-            except Exception as e:
-                print(f"Error in initial recommendation: {str(e)}")
-                return JsonResponse({
-                    'error': '추천 생성 중 오류가 발생했습니다',
-                    'status': 'error'
-                }, status=500)
-
-        # Search for specific product information
-        search_query = f"{recommended_product} 금융상품 특징"
-        search_result = search_duckduckgo(search_query) or "검색 결과 없음"
-
-        # 두 번째 API 호출 (상세 추천)
-        for attempt in range(max_retries):
-            try:
-                final_messages = [
-                    {
-                        "role": "system",
-                        "content": """당신은 금융 상품 추천 전문가입니다. 다음 형식으로 정확히 답변하세요:
-
-추천상품: [상품명(은행명)]
-추천이유: [검색 결과 기반 한줄 설명]
-세부설명: [상품 특징 설명]
-시장분석: [현재 시장에서의 위치]"""
-                    },
-                    {
-                        "role": "user",
-                        "content": f"""
-사용자 요구사항: {user_message}
-추천된 상품: {recommended_product}
-
-검색된 실제 정보:
-{search_result}
-
-위 정보를 바탕으로 추천 정보를 작성해주세요."""
-                    }
-                ]
-
-                final_completion = client.chat.completions.create(
-                    model="llama-3.2-90b-text-preview",
-                    messages=final_messages,
-                    temperature=0.1,
-                    max_tokens=4096,
-                    top_p=1,
-                    stream=False,
-                    stop=None
-                )
-                response = final_completion.choices[0].message.content.strip()
-                break
-
-            except RateLimitError as e:
-                if attempt < max_retries - 1:
-                    wait_time = base_delay * (2 ** attempt)
-                    print(f"Rate limit reached. Waiting {wait_time} seconds...")
-                    time.sleep(wait_time)
-                    continue
-                return JsonResponse({
-                    'error': '서비스가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.',
-                    'status': 'error'
-                }, status=429)
-            except Exception as e:
-                print(f"Error in final recommendation: {str(e)}")
-                return JsonResponse({
-                    'error': '추천 생성 중 오류가 발생했습니다',
-                    'status': 'error'
-                }, status=500)
-
-        # 응답 파싱
-        parsed_response = {
-            'product': recommended_product,
-            'reason': '정보 없음',
-            'details': '정보 없음',
-            'market_analysis': '정보 없음'
-        }
-
-        try:
-            lines = [line.strip() for line in response.split('\n') if line.strip()]
-            for line in lines:
-                if line.startswith('추천상품:'):
-                    parsed_response['product'] = line.replace('추천상품:', '').strip()
-                elif line.startswith('추천이유:'):
-                    parsed_response['reason'] = line.replace('추천이유:', '').strip()
-                elif line.startswith('세부설명:'):
-                    parsed_response['details'] = line.replace('세부설명:', '').strip()
-                elif line.startswith('시장분석:'):
-                    parsed_response['market_analysis'] = line.replace('시장분석:', '').strip()
-        except Exception as e:
-            print(f"Response parsing error: {str(e)}")
-
+        analyzer = ProductAnalyzer(session_id)
+        intent_data = analyzer.analyze_intent(user_message)
+        recommendation = analyzer.get_product_recommendation(user_message, intent_data)
+        
+        if recommendation:
+            analyzer.context_manager.add_context(
+                message=user_message,
+                response=json.dumps(recommendation),
+                context_data={'intent': intent_data}
+            )
+            
+            return JsonResponse({
+                'message': recommendation,
+                'status': 'success'
+            })
+        
         return JsonResponse({
-            'message': parsed_response,
-            'status': 'success'
-        })
+            'error': '추천을 생성할 수 없습니다',
+            'status': 'error'
+        }, status=500)
 
     except Exception as e:
         print(f"Error in chat_recommend: {str(e)}")
         return JsonResponse({
-            'error': '추천 생성 중 오류가 발생했습니다',
+            'error': str(e),
             'status': 'error'
         }, status=500)
+
+def validate_recommendation(recommendation, available_products):
+    """추천된 상품이 실제 DB에 존재하는지 검증"""
+    if not recommendation or 'product' not in recommendation:
+        return False
+        
+    # 정확한 상품명 매칭을 위해 정규화된 문자열 비교
+    recommended_product = recommendation['product'].strip()
+    
+    # 정확히 일치하는 상품이 있는지 확인
+    exact_match = any(product.strip() == recommended_product for product in available_products)
+    if exact_match:
+        return True
+        
+    # 부분 일치하는 상품이 있는지 확인
+    partial_matches = [product for product in available_products 
+                      if recommended_product in product or product in recommended_product]
+    
+    if partial_matches:
+        # 가장 유사한 상품으로 recommendation 업데이트
+        recommendation['product'] = partial_matches[0]
+        return True
+        
+    return False
