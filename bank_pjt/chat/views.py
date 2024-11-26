@@ -296,35 +296,32 @@ def chat_recommend(request):
         if not user_message:
             return JsonResponse({'error': '메시지가 필요합니다'}, status=400)
 
+        # Get available products
         term_deposits = TermDeposit.objects.all()
-        context = f"""
-사용자 입력: {user_message}
+        product_list = [f"{d.fin_prdt_nm}({d.kor_co_nm})" for d in term_deposits]
 
-현재 은행의 예금 상품 목록:
-{', '.join([f"{d.fin_prdt_nm}({d.kor_co_nm})" for d in term_deposits])}"""
-
-        # Debugging: Print context
-        print("Context for recommendation:", context)
-
-        # Generate initial recommendation using Groq
+        # First, get product recommendation
         client = Groq()
-        messages = [
+        initial_messages = [
             {
                 "role": "system",
-                "content": """당신은 금융 상품 추천 전문가입니다. 다음 형식으로만 답변하세요:
-추천상품: [상품명(은행명)]
-추천이유: 한 줄로 핵심만 설명
-세부설명: 상품의 특징과 장점을 한 줄로 설명"""
+                "content": """당신은 금융 상품 추천 전문가입니다. 주어진 상품 목록에서만 선택하여 추천해주세요."""
             },
             {
                 "role": "user",
-                "content": context
+                "content": f"""
+사용자 입력: {user_message}
+
+선택 가능한 상품 목록:
+{', '.join(product_list)}
+
+위 목록에서 가장 적합한 상품 하나만 추천해주세요. 상품명(은행명) 형식으로만 답변하세요."""
             }
         ]
 
-        completion = client.chat.completions.create(
+        initial_completion = client.chat.completions.create(
             model="llama-3.2-90b-text-preview",
-            messages=messages,
+            messages=initial_messages,
             temperature=0.1,
             max_tokens=4096,
             top_p=1,
@@ -332,17 +329,76 @@ def chat_recommend(request):
             stop=None
         )
 
-        response = completion.choices[0].message.content.strip()
+        recommended_product = initial_completion.choices[0].message.content.strip()
+        if not recommended_product:
+            return JsonResponse({
+                'error': '추천 상품을 생성할 수 없습니다',
+                'status': 'error'
+            }, status=500)
+        
+        # Search for specific product information
+        search_query = f"{recommended_product} 금융상품 특징"
+        search_result = search_duckduckgo(search_query) or "검색 결과 없음"
 
-        # Debugging: Print response
-        print("Response from Groq:", response)
+        # Generate final recommendation
+        final_messages = [
+            {
+                "role": "system",
+                "content": """당신은 금융 상품 추천 전문가입니다. 다음 형식으로 정확히 답변하세요:
 
-        lines = response.split('\n')
+추천상품: [상품명(은행명)]
+추천이유: [검색 결과 기반 한줄 설명]
+세부설명: [상품 특징 설명]
+시장분석: [현재 시장에서의 위치]"""
+            },
+            {
+                "role": "user",
+                "content": f"""
+사용자 요구사항: {user_message}
+추천된 상품: {recommended_product}
+
+검색된 실제 정보:
+{search_result}
+
+위 정보를 바탕으로 추천 정보를 작성해주세요."""
+            }
+        ]
+
+        final_completion = client.chat.completions.create(
+            model="llama-3.2-90b-text-preview",
+            messages=final_messages,
+            temperature=0.1,
+            max_tokens=4096,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
+
+        response = final_completion.choices[0].message.content.strip()
+        
+        # 안전한 응답 파싱
         parsed_response = {
-            'product': lines[0].replace('추천상품: ', ''),
-            'reason': lines[1].replace('추천이유: ', ''),
-            'details': lines[2].replace('세부설명: ', '')
+            'product': recommended_product,  # 기본값 설정
+            'reason': '정보 없음',
+            'details': '정보 없음',
+            'market_analysis': '정보 없음'
         }
+
+        # 응답 파싱 시도
+        try:
+            lines = [line.strip() for line in response.split('\n') if line.strip()]
+            for line in lines:
+                if line.startswith('추천상품:'):
+                    parsed_response['product'] = line.replace('추천상품:', '').strip()
+                elif line.startswith('추천이유:'):
+                    parsed_response['reason'] = line.replace('추천이유:', '').strip()
+                elif line.startswith('세부설명:'):
+                    parsed_response['details'] = line.replace('세부설명:', '').strip()
+                elif line.startswith('시장분석:'):
+                    parsed_response['market_analysis'] = line.replace('시장분석:', '').strip()
+        except Exception as e:
+            print(f"Response parsing error: {str(e)}")
+            # 파싱 실패시 기본값 유지
 
         return JsonResponse({
             'message': parsed_response,
@@ -350,7 +406,7 @@ def chat_recommend(request):
         })
 
     except Exception as e:
-        print(f"Error in chat_recommend: {str(e)}")  # Log the error
+        print(f"Error in chat_recommend: {str(e)}")
         return JsonResponse({
             'error': '추천 생성 중 오류가 발생했습니다',
             'status': 'error'

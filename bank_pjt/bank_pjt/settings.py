@@ -110,12 +110,17 @@ WSGI_APPLICATION = 'bank_pjt.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # MariaDB의 경우 mysql 엔진 사용
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bank_db',
         'USER': 'root',
         'PASSWORD': 'Processor@3014',
-        'HOST': 'localhost',  # 또는 데이터베이스 호스트 주소
-        'PORT': '3306',       # 기본 포트
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'use_unicode': True,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'; SET character_set_connection=utf8mb4; SET collation_connection=utf8mb4_unicode_ci;",
+        }
     }
 }
 
